@@ -1,10 +1,18 @@
 import request from '@/utils/request'
 
 export function login(data) {
+  var loginData = new FormData()
+  loginData.append('username', data.username)
+  loginData.append('password', data.password)
+  loginData.append('grant_type', 'password')
+  loginData.append('scope', 'write')
+  loginData.append('client_id', 'uJfDugEBMRPFGabdsPUcQ85JMrkO0B0US5nvu7pz')
+  loginData.append('client_secret', 'JNLRcIDlHH3bBzpdy0evZZ36zNh0ghZWHpqNIeDVKH7arwWsvFHyeF2p37sUDLik7knkrPGzXnKBuTlMjG3jyeSQUNBC0veFyPVzqI4YcVYfJDYvhCAB8xsaDpWx8ZkW')
+
   return request({
-    url: '/vue-element-admin/user/login',
+    url: '/api/o/token/',
     method: 'post',
-    data
+    data: loginData
   })
 }
 
