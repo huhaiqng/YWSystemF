@@ -1,6 +1,7 @@
 import { login } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, setUserName, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
+import userlogo from '@/images/userlogo.jpg'
 
 const state = {
   token: getToken(),
@@ -36,6 +37,7 @@ const actions = {
       login({ username: username.trim(), password: password }).then(response => {
         commit('SET_TOKEN', response.access_token)
         setToken(response.access_token)
+        setUserName(username)
         resolve()
       }).catch(error => {
         reject(error)
@@ -49,7 +51,7 @@ const actions = {
       const data = {
         roles: ['admin'],
         introduction: 'I am a super administrator',
-        avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+        avatar: userlogo,
         name: 'Super Admin'
       }
 

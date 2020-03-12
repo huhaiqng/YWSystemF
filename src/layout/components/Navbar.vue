@@ -6,29 +6,13 @@
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <search id="header-search" class="right-menu-item" />
-
-        <error-log class="errLog-container right-menu-item hover-effect" />
-
+        <span class="right-menu-item">{{ username }}</span>
+        <el-tooltip class="item" effect="dark" content="退出" placement="bottom">
+          <div class="right-menu-item hover-effect" style="padding-right: 20px;">
+            <svg-icon icon-class="user" @click="logout" />
+          </div>
+        </el-tooltip>
       </template>
-
-      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
-        <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
-        </div>
-        <el-dropdown-menu slot="dropdown">
-          <router-link to="/profile/index">
-            <el-dropdown-item>个人中心</el-dropdown-item>
-          </router-link>
-          <router-link to="/">
-            <el-dropdown-item>首页</el-dropdown-item>
-          </router-link>
-          <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">退出</span>
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
     </div>
   </div>
 </template>
@@ -37,17 +21,17 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-import ErrorLog from '@/components/ErrorLog'
-import Search from '@/components/HeaderSearch'
+import { getUserName } from '@/utils/auth'
 
 export default {
   components: {
     Breadcrumb,
-    Hamburger,
-    ErrorLog,
-    // Screenfull,
-    // SizeSelect,
-    Search
+    Hamburger
+  },
+  data() {
+    return {
+      username: getUserName()
+    }
   },
   computed: {
     ...mapGetters([
