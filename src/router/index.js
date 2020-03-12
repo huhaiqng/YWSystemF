@@ -106,9 +106,9 @@ export const asyncRoutes = [
         meta: { 'title': '主机池' }
       },
       {
-        path: 'instance',
-        component: () => import('@/views/instance/index'),
-        meta: { 'title': '实例' }
+        path: 'instanceJava',
+        component: () => import('@/views/host/instance/java'),
+        meta: { 'title': 'Java 实例' }
       }
     ]
   },
