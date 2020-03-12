@@ -90,13 +90,36 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
+    path: '/resource',
+    component: Layout,
+    redirect: '/resource/host',
+    name: 'Resource',
+    meta: {
+      'title': '资源管理',
+      'icon': 'tree'
+    },
+    children: [
+      {
+        path: 'host',
+        component: () => import('@/views/host/index'),
+        name: 'Host',
+        meta: { 'title': '主机池' }
+      },
+      {
+        path: 'instance',
+        component: () => import('@/views/instance/index'),
+        meta: { 'title': '实例' }
+      }
+    ]
+  },
+  {
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',
     alwaysShow: true, // will always show the root menu
     name: 'Permission',
     meta: {
-      title: 'Permission',
+      title: '权限设置',
       icon: 'lock',
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
