@@ -101,13 +101,13 @@ export const asyncRoutes = [
     children: [
       {
         path: 'host',
-        component: () => import('@/views/host/index'),
+        component: () => import('@/views/resource/host'),
         name: 'Host',
-        meta: { 'title': '主机池' }
+        meta: { 'title': '主机' }
       },
       {
         path: 'instanceJava',
-        component: () => import('@/views/host/instance/java'),
+        component: () => import('@/views/resource/instance/java'),
         meta: { 'title': 'Java 实例' }
       }
     ]
