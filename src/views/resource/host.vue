@@ -279,7 +279,6 @@ export default {
         env: '测试环境',
         ins_num: 0,
         status: true,
-        deleted: false,
         created: new Date()
       },
       dialogFormVisible: false,
@@ -357,7 +356,6 @@ export default {
         env: '测试环境',
         ins_num: 0,
         status: true,
-        deleted: false,
         created: new Date()
       }
       this.passwordType = 'password'
@@ -462,8 +460,8 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
+        const tHeader = ['主机名', 'IP 地址', '系统版本', 'CPU 核数', '内存大小', '硬盘大小', '位置', '管理员', '类别', '环境', '状态']
+        const filterVal = ['name', 'ip', 'version', 'cpu', 'memory', 'disk', 'position', 'admin', 'type', 'env', 'status']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,
