@@ -14,7 +14,7 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         添加
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-upload" @click="handleUpload">
+      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-upload" @click="dialogUploadVisible=true">
         导入
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
@@ -189,6 +189,26 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <el-dialog :visible.sync="dialogUploadVisible" title="导入" width="60%">
+      <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />
+      <span><h3>导入成功数量：{{ uploadSuccessCount }} 导入失败数量：{{ uploadFailCount }}</h3></span>
+      <!-- <el-table :data="failTableData" border highlight-current-row style="width: 100%;margin-top:20px;">
+        <el-table-column v-for="item of tableHeader" :key="item" :prop="item" :label="item" />
+      </el-table> -->
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="afterUpload">关闭</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
+      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
+        <el-table-column prop="key" label="Channel" />
+        <el-table-column prop="pv" label="Pv" />
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
+      </span>
+    </el-dialog>
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
       <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
         <el-table-column prop="key" label="Channel" />
@@ -207,6 +227,7 @@ import { getHosts, addHost, updateHost, deleteHost } from '@/api/resource'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 
 const calendarTypeOptions = [
   { key: 'CN', display_name: 'China' },
@@ -223,7 +244,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination },
+  components: { Pagination, UploadExcelComponent },
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -246,13 +267,11 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
-        importance: undefined,
-        title: undefined,
-        type: undefined,
-        env: undefined
+        ip: '',
+        type: '',
+        env: '',
+        limit: 20
       },
-      importanceOptions: [1, 2, 3],
       calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
@@ -265,6 +284,7 @@ export default {
       typeOptions: ['nginx', 'apache', 'java', 'mysql', 'oracle', 'monogodb', 'redis', 'zookeeper', 'kafka'],
       envOptions: ['测试环境', '生产环境'],
       showReviewer: false,
+      dialogUploadVisible: false,
       temp: {
         name: undefined,
         ip: undefined,
@@ -298,7 +318,10 @@ export default {
       capsTooltip: false,
       passwordType: 'password',
       showButtion: true,
-      disableEdit: false
+      disableEdit: false,
+      tableHeader: [],
+      uploadSuccessCount: 0,
+      uploadFailCount: 0
     }
   },
   created() {
@@ -460,7 +483,7 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['主机名', 'IP 地址', '系统版本', 'CPU 核数', '内存大小', '硬盘大小', '位置', '管理员', '类别', '环境', '状态']
+        const tHeader = ['name', 'ip', 'version', 'cpu', 'memory', 'disk', 'position', 'admin', 'type', 'env', 'status']
         const filterVal = ['name', 'ip', 'version', 'cpu', 'memory', 'disk', 'position', 'admin', 'type', 'env', 'status']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
@@ -511,6 +534,41 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
+    },
+    beforeUpload(file) {
+      const isLt1M = file.size / 1024 / 1024 < 1
+
+      if (isLt1M) {
+        return true
+      }
+
+      this.$message({
+        message: 'Please do not upload files larger than 1m in size.',
+        type: 'warning'
+      })
+      return false
+    },
+    handleSuccess({ results, header }) {
+      this.uploadSuccessCount = 0
+      this.uploadFailCount = 0
+      this.failTableData = []
+      const tableData = results
+      for (var i = 0; i < tableData.length; i++) {
+        addHost(tableData[i]).then(() => {
+          this.uploadSuccessCount += 1
+        }).catch(() => {
+          this.uploadFailCount += 1
+        })
+      }
+      this.tableHeader = header
+    },
+    afterUpload() {
+      this.dialogUploadVisible = false
+      this.tableHeader = []
+      this.tableData = []
+      this.uploadSuccessCount = 0
+      this.uploadFailCount = 0
+      this.getList()
     }
   }
 }
