@@ -113,6 +113,34 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/account',
+    component: Layout,
+    redirect: '/account/software',
+    name: 'Account',
+    meta: {
+      title: '账号管理',
+      icon: 'peoples'
+    },
+    children: [
+      {
+        path: 'software',
+        component: () => import('@/views/account/software'),
+        name: 'Software',
+        meta: {
+          title: '系统账号'
+        }
+      },
+      {
+        path: 'websystem',
+        component: () => import('@/views/account/websystem'),
+        name: 'WebSystem',
+        meta: {
+          title: 'Web 账号'
+        }
+      }
+    ]
+  },
+  {
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',

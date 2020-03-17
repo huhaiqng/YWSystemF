@@ -30,11 +30,10 @@
       fit
       highlight-current-row
       style="width: 100%;"
-      @sort-change="sortChange"
     >
       <el-table-column label="序号" align="center" width="50px">
         <template slot-scope="{$index}">
-          <span>{{ $index + 1 }}</span>
+          <span>{{ $index + 1 + (listQuery.page - 1)*listQuery.limit }}</span>
         </template>
       </el-table-column>
       <el-table-column label="主机名" align="center">
@@ -102,7 +101,7 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="100px" style="margin-right:30px; margin-left:30px;" :disabled="disableEdit">
+      <el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style="margin-right:30px; margin-left:30px;" :disabled="disableEdit">
         <el-form-item label="主机名" prop="name">
           <el-input v-model="temp.name" style="width:60%" placeholder="主机名" />
         </el-form-item>
@@ -193,72 +192,24 @@
     <el-dialog :visible.sync="dialogUploadVisible" title="导入" width="60%">
       <upload-excel-component :on-success="handleSuccess" :before-upload="beforeUpload" />
       <span><h3>导入成功数量：{{ uploadSuccessCount }} 导入失败数量：{{ uploadFailCount }}</h3></span>
-      <!-- <el-table :data="failTableData" border highlight-current-row style="width: 100%;margin-top:20px;">
-        <el-table-column v-for="item of tableHeader" :key="item" :prop="item" :label="item" />
-      </el-table> -->
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="afterUpload">关闭</el-button>
       </div>
-    </el-dialog>
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
-      </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchPv } from '@/api/article'
 import { getHosts, addHost, updateHost, deleteHost } from '@/api/resource'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 
-const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
-
-// arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
-
 export default {
   name: 'ComplexTable',
   components: { Pagination, UploadExcelComponent },
   directives: { waves },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    },
-    typeFilter(type) {
-      return calendarTypeKeyValue[type]
-    }
-  },
   data() {
     return {
       tableKey: 0,
@@ -272,7 +223,6 @@ export default {
         env: '',
         limit: 20
       },
-      calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
       versionOptions: ['CentOS 6', 'CentOS 7', 'Windows Server 2008 R2'],
@@ -283,7 +233,6 @@ export default {
       adminOptions: ['root', 'administrator'],
       typeOptions: ['nginx', 'apache', 'java', 'mysql', 'oracle', 'monogodb', 'redis', 'zookeeper', 'kafka'],
       envOptions: ['测试环境', '生产环境'],
-      showReviewer: false,
       dialogUploadVisible: false,
       temp: {
         name: undefined,
@@ -308,14 +257,7 @@ export default {
         create: '添加',
         detail: '详情'
       },
-      dialogPvVisible: false,
-      pvData: [],
-      rules: {
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
-      },
       downloadLoading: false,
-      capsTooltip: false,
       passwordType: 'password',
       showButtion: true,
       disableEdit: false,
@@ -349,20 +291,6 @@ export default {
         type: 'success'
       })
       row.status = status
-    },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
     },
     resetTemp() {
       this.temp = {
@@ -474,12 +402,6 @@ export default {
         })
       })
     },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
-    },
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
@@ -494,9 +416,6 @@ export default {
         this.downloadLoading = false
       })
     },
-    handleUpload() {
-      console.log('upload')
-    },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
         if (j === 'timestamp') {
@@ -505,14 +424,6 @@ export default {
           return v[j]
         }
       }))
-    },
-    getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
-    },
-    checkCapslock(e) {
-      const { key } = e
-      this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')
     },
     showPwd() {
       if (this.passwordType === 'password') {
