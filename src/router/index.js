@@ -108,7 +108,14 @@ export const asyncRoutes = [
       {
         path: 'instanceJava',
         component: () => import('@/views/resource/instance/java'),
+        name: 'InstanceJava',
         meta: { 'title': 'Java 实例' }
+      },
+      {
+        path: 'project',
+        component: () => import('@/views/resource/project'),
+        name: 'Project',
+        meta: { 'title': '项目' }
       }
     ]
   },

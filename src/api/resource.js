@@ -27,3 +27,10 @@ export function deleteHost(id) {
     method: 'delete'
   })
 }
+
+export function getProjects() {
+  return request({
+    url: '/api/projects/',
+    method: 'get'
+  })
+}

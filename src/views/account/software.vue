@@ -68,28 +68,24 @@
               <el-col :span="12">{{ temp.username }}</el-col>
             </el-row>
           </div>
-
           <div class="drawer-item">
             <el-row>
               <el-col :span="12">密码：</el-col>
               <el-col :span="12">{{ temp.password }}</el-col>
             </el-row>
           </div>
-
           <div class="drawer-item">
             <el-row>
               <el-col :span="12">用途：</el-col>
               <el-col :span="12">{{ temp.use }}</el-col>
             </el-row>
           </div>
-
           <div class="drawer-item">
             <el-row>
               <el-col :span="12">创建时间：</el-col>
               <el-col :span="12">{{ temp.created | parseTime('{y}-{m}-{d} {h}:{m}') }}</el-col>
             </el-row>
           </div>
-
         </div>
       </div>
     </el-drawer>
