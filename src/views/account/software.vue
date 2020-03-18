@@ -13,7 +13,7 @@
       </el-table-column>
       <el-table-column label="用户名" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.username }}</span>
+          <span class="link-type" @click="showDetail(row)">{{ row.username }}</span>
         </template>
       </el-table-column>
       <el-table-column label="用途" align="center">
@@ -58,6 +58,41 @@
         </el-button>
       </div>
     </el-dialog>
+    <el-drawer title="详情" :visible.sync="drawerVisible" :with-header="false">
+      <div class="drawer-container">
+        <div>
+          <h3 class="drawer-title">详情</h3>
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">用户名：</el-col>
+              <el-col :span="12">{{ temp.username }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">密码：</el-col>
+              <el-col :span="12">{{ temp.password }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">用途：</el-col>
+              <el-col :span="12">{{ temp.use }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">创建时间：</el-col>
+              <el-col :span="12">{{ temp.created | parseTime('{y}-{m}-{d} {h}:{m}') }}</el-col>
+            </el-row>
+          </div>
+
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 <script>
@@ -86,10 +121,10 @@ export default {
       dialogVisible: false,
       dialogStatus: null,
       passwordType: 'password',
+      drawerVisible: false,
       textMap: {
         create: '新增',
-        edit: '编辑',
-        detail: '详情'
+        edit: '编辑'
       }
     }
   },
@@ -168,6 +203,11 @@ export default {
         })
       })
     },
+    showDetail(row) {
+      this.temp = Object.assign({}, row)
+      this.temp.password = decodeStr(this.temp.password)
+      this.drawerVisible = true
+    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -187,3 +227,23 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.drawer-container {
+  padding: 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+
+  .drawer-title {
+    margin-bottom: 12px;
+    color: rgba(0, 0, 0, .85);
+    line-height: 22px;
+  }
+
+  .drawer-item {
+    color: rgba(0, 0, 0, .65);
+    font-size: 14px;
+    padding: 12px 0;
+  }
+}
+</style>

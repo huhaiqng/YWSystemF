@@ -2,10 +2,10 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.ip" placeholder="IP 地址" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.type" placeholder="类别" clearable style="width: 90px" class="filter-item">
+      <el-select v-model="listQuery.type" placeholder="类别" clearable style="width: 150px" class="filter-item">
         <el-option v-for="item in typeOptions" :key="item" :label="item" :value="item" />
       </el-select>
-      <el-select v-model="listQuery.env" placeholder="环境" clearable class="filter-item" style="width: 130px">
+      <el-select v-model="listQuery.env" placeholder="环境" clearable class="filter-item" style="width: 150px">
         <el-option v-for="item in envOptions" :key="item" :label="item" :value="item" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -101,7 +101,7 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style="margin-right:30px; margin-left:30px;" :disabled="disableEdit">
+      <el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style="margin-right:30px; margin-left:30px;">
         <el-form-item label="主机名" prop="name">
           <el-input v-model="temp.name" style="width:60%" placeholder="主机名" />
         </el-form-item>
@@ -179,7 +179,7 @@
           </span>
         </el-form-item>
       </el-form>
-      <div v-if="showButtion" slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
@@ -196,6 +196,105 @@
         <el-button type="primary" @click="afterUpload">关闭</el-button>
       </div>
     </el-dialog>
+
+    <el-drawer title="详情" :visible.sync="drawerVisible" :with-header="false">
+      <div class="drawer-container">
+        <div>
+          <h3 class="drawer-title">详情</h3>
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">主机名：</el-col>
+              <el-col :span="12">{{ temp.name }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">IP 地址：</el-col>
+              <el-col :span="12">{{ temp.ip }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">版本：</el-col>
+              <el-col :span="12">{{ temp.version }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">CPU 核数：</el-col>
+              <el-col :span="12">{{ temp.cpu }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">内存大小：</el-col>
+              <el-col :span="12">{{ temp.memory }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">硬盘大小：</el-col>
+              <el-col :span="12">{{ temp.disk }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">位置：</el-col>
+              <el-col :span="12">{{ temp.position }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">系统管理员：</el-col>
+              <el-col :span="12">{{ temp.admin }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">密码：</el-col>
+              <el-col :span="12">{{ temp.password }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">类别：</el-col>
+              <el-col :span="12">{{ temp.type }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">环境：</el-col>
+              <el-col :span="12">{{ temp.env }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">状态：</el-col>
+              <el-col :span="12">{{ temp.ins_num === 0 ? "空闲":"使用中" }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">创建时间：</el-col>
+              <el-col :span="12">{{ temp.created | parseTime('{y}-{m}-{d} {h}:{m}') }}</el-col>
+            </el-row>
+          </div>
+
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
@@ -205,6 +304,7 @@ import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
+import { encodeStr, decodeStr } from '@/utils/base64'
 
 export default {
   name: 'ComplexTable',
@@ -231,7 +331,7 @@ export default {
       diskOptions: ['40G', '80G', '12G'],
       positionOptions: ['阿里云', '电信机房', '公司机房'],
       adminOptions: ['root', 'administrator'],
-      typeOptions: ['nginx', 'apache', 'java', 'mysql', 'oracle', 'monogodb', 'redis', 'zookeeper', 'kafka'],
+      typeOptions: ['nginx', 'apache', 'java', 'mysql', 'oracle', 'mongodb', 'redis', 'zookeeper', 'kafka'],
       envOptions: ['测试环境', '生产环境'],
       dialogUploadVisible: false,
       temp: {
@@ -243,7 +343,7 @@ export default {
         disk: '80G',
         position: '阿里云',
         admin: 'root',
-        password: undefined,
+        password: '',
         type: 'java',
         env: '测试环境',
         ins_num: 0,
@@ -259,8 +359,7 @@ export default {
       },
       downloadLoading: false,
       passwordType: 'password',
-      showButtion: true,
-      disableEdit: false,
+      drawerVisible: false,
       tableHeader: [],
       uploadSuccessCount: 0,
       uploadFailCount: 0
@@ -302,7 +401,7 @@ export default {
         disk: '80G',
         position: '阿里云',
         admin: 'root',
-        password: undefined,
+        password: '',
         type: 'java',
         env: '测试环境',
         ins_num: 0,
@@ -310,8 +409,6 @@ export default {
         created: new Date()
       }
       this.passwordType = 'password'
-      this.showButtion = true
-      this.disableEdit = false
     },
     handleCreate() {
       this.resetTemp()
@@ -324,6 +421,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          this.temp.password = encodeStr(this.temp.password)
           addHost(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -339,11 +437,10 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
+      this.temp.password = decodeStr(this.temp.password)
       this.dialogStatus = 'update'
       this.passwordType = 'password'
       this.dialogFormVisible = true
-      this.showButtion = true
-      this.disableEdit = false
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
@@ -351,8 +448,8 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          updateHost(tempData).then(() => {
+          this.temp.password = encodeStr(this.temp.password)
+          updateHost(this.temp).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
@@ -436,15 +533,9 @@ export default {
       })
     },
     showDetail(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.dialogStatus = 'detail'
-      this.passwordType = 'password'
-      this.dialogFormVisible = true
-      this.showButtion = false
-      this.disableEdit = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+      this.temp = Object.assign({}, row)
+      this.temp.password = decodeStr(this.temp.password)
+      this.drawerVisible = true
     },
     beforeUpload(file) {
       const isLt1M = file.size / 1024 / 1024 < 1
@@ -465,6 +556,7 @@ export default {
       this.failTableData = []
       const tableData = results
       for (var i = 0; i < tableData.length; i++) {
+        tableData[i].password = encodeStr(tableData[i].password)
         addHost(tableData[i]).then(() => {
           this.uploadSuccessCount += 1
         }).catch(() => {
@@ -497,5 +589,23 @@ $light_gray:#eee;
   color: $dark_gray;
   cursor: pointer;
   user-select: none;
+}
+.drawer-container {
+  padding: 24px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+
+  .drawer-title {
+    margin-bottom: 12px;
+    color: rgba(0, 0, 0, .85);
+    line-height: 22px;
+  }
+
+  .drawer-item {
+    color: rgba(0, 0, 0, .65);
+    font-size: 14px;
+    padding: 12px 0;
+  }
 }
 </style>
