@@ -41,7 +41,7 @@ service.interceptors.response.use(
   },
   error => {
     Message({
-      message: error.response.data,
+      message: error.response.data.detail,
       type: 'error',
       duration: 5 * 1000
     })
@@ -51,7 +51,6 @@ service.interceptors.response.use(
         cancelButtonText: '取消',
         type: 'warning'
       }).then((response) => {
-        console.log(response)
         store.dispatch('user/resetToken').then(() => {
           location.reload()
         })

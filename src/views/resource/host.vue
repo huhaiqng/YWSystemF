@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-input v-model="listQuery.ip" placeholder="IP 地址" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-select v-model="listQuery.type" placeholder="类别" clearable style="width: 150px" class="filter-item">
-        <el-option v-for="item in typeOptions" :key="item" :label="item" :value="item" />
+        <el-option v-for="item in typeOptions" :key="item.id" :label="item.name" :value="item.name" />
       </el-select>
       <el-select v-model="listQuery.env" placeholder="环境" clearable class="filter-item" style="width: 150px">
         <el-option v-for="item in envOptions" :key="item" :label="item" :value="item" />
@@ -167,7 +167,7 @@
           <el-col :span="12">
             <el-form-item label="类别" prop="type">
               <el-select v-model="temp.type" class="filter-item" placeholder="选择类别">
-                <el-option v-for="item in typeOptions" :key="item" :label="item" :value="item" />
+                <el-option v-for="item in typeOptions" :key="item.id" :label="item.name" :value="item.name" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -299,7 +299,7 @@
 </template>
 
 <script>
-import { getHosts, addHost, updateHost, deleteHost } from '@/api/resource'
+import { getHosts, addHost, updateHost, deleteHost, getSoftware } from '@/api/resource'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -323,8 +323,6 @@ export default {
         env: '',
         limit: 20
       },
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
       versionOptions: ['CentOS 6', 'CentOS 7', 'Windows Server 2008 R2'],
       cpuOptions: [4, 8, 16],
       memoryOptions: ['4G', '8G', '16G', '32G'],
@@ -344,7 +342,7 @@ export default {
         position: '阿里云',
         admin: 'root',
         password: '',
-        type: 'java',
+        type: 'tomcat',
         env: '测试环境',
         ins_num: 0,
         status: true,
@@ -367,6 +365,10 @@ export default {
   },
   created() {
     this.getList()
+    getSoftware().then(response => {
+      this.typeOptions = response.results
+      console.log(this.typeOptions)
+    })
   },
   methods: {
     getList() {
@@ -374,7 +376,6 @@ export default {
       getHosts(this.listQuery).then(response => {
         this.list = response.results
         this.total = response.count
-        // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
@@ -402,7 +403,7 @@ export default {
         position: '阿里云',
         admin: 'root',
         password: '',
-        type: 'java',
+        type: 'tomcat',
         env: '测试环境',
         ins_num: 0,
         status: true,

@@ -34,3 +34,10 @@ export function getProjects() {
     method: 'get'
   })
 }
+
+export function getSoftware() {
+  return request({
+    url: '/api/softwares/',
+    method: 'get'
+  })
+}
