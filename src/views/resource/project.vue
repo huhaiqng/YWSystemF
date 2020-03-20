@@ -48,7 +48,7 @@ export default {
   methods: {
     getList() {
       getProjects().then(response => {
-        var results = response.results
+        var results = response
         var pro_project_children = []
         var test_project_children = []
         for (var i = 0; i < results.length; i++) {
@@ -121,7 +121,7 @@ export default {
   max-width: 220px;
   background-color: #f0f2f5;
   /deep/.el-scrollbar{
-    height: calc(100vh - 96px);
+    height: calc(100vh - 84px);
     .el-scrollbar__wrap{
       overflow-x: hidden;
     }

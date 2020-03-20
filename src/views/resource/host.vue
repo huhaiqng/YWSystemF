@@ -367,7 +367,6 @@ export default {
     this.getList()
     getSoftware().then(response => {
       this.typeOptions = response.results
-      console.log(this.typeOptions)
     })
   },
   methods: {

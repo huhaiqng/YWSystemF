@@ -41,3 +41,26 @@ export function getSoftware() {
     method: 'get'
   })
 }
+
+export function getProjectWeb(data) {
+  return request({
+    url: '/api/getProjectWeb',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectWeb(data) {
+  return request({
+    url: '/api/projectWeb/',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteProjectWeb(id) {
+  return request({
+    url: `/api/projectWeb/${id}`,
+    method: 'delete'
+  })
+}
