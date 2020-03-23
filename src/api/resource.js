@@ -58,6 +58,14 @@ export function addProjectWeb(data) {
   })
 }
 
+export function updateProjectWeb(data) {
+  return request({
+    url: `/api/projectWeb/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
 export function deleteProjectWeb(id) {
   return request({
     url: `/api/projectWeb/${id}`,

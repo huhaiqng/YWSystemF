@@ -38,12 +38,12 @@
       </el-table-column>
       <el-table-column label="主机名" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="showDetail(row)">{{ row.name }}</span>
+          <span>{{ row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="IP 地址" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.ip }}</span>
+          <span class="link-type" @click="showDetail(row)">{{ row.ip }}</span>
         </template>
       </el-table-column>
       <el-table-column label="系统版本" align="center">
@@ -375,9 +375,7 @@ export default {
       getHosts(this.listQuery).then(response => {
         this.list = response.results
         this.total = response.count
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+        this.listLoading = false
       })
     },
     handleFilter() {
