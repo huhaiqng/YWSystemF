@@ -1,6 +1,11 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
+      <el-breadcrumb separator-class="el-icon-arrow-right" style="padding-bottom: 20px">
+        <el-breadcrumb-item>{{ env }}</el-breadcrumb-item>
+        <el-breadcrumb-item>{{ project }}</el-breadcrumb-item>
+        <el-breadcrumb-item>{{ software }}</el-breadcrumb-item>
+      </el-breadcrumb>
       <el-button type="primary" class="filter-item" icon="el-icon-edit" @click="handleCreate()">
         添加
       </el-button>
@@ -74,109 +79,16 @@
       </div>
     </el-dialog>
     <el-drawer title="详情" :visible.sync="hostDrawerVisible" :with-header="false">
-      <div class="drawer-container">
-        <div>
-          <h3 class="drawer-title">详情</h3>
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">主机名：</el-col>
-              <el-col :span="12">{{ hostTemp.name }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">IP 地址：</el-col>
-              <el-col :span="12">{{ hostTemp.ip }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">版本：</el-col>
-              <el-col :span="12">{{ hostTemp.version }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">CPU 核数：</el-col>
-              <el-col :span="12">{{ hostTemp.cpu }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">内存大小：</el-col>
-              <el-col :span="12">{{ hostTemp.memory }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">硬盘大小：</el-col>
-              <el-col :span="12">{{ hostTemp.disk }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">位置：</el-col>
-              <el-col :span="12">{{ hostTemp.position }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">系统管理员：</el-col>
-              <el-col :span="12">{{ hostTemp.admin }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">密码：</el-col>
-              <el-col :span="12">{{ hostTemp.password }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">类别：</el-col>
-              <el-col :span="12">{{ hostTemp.type }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">环境：</el-col>
-              <el-col :span="12">{{ hostTemp.env }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">状态：</el-col>
-              <el-col :span="12">{{ hostTemp.ins_num === 0 ? "空闲":"使用中" }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">创建时间：</el-col>
-              <el-col :span="12">{{ hostTemp.created | parseTime('{y}-{m}-{d} {h}:{m}') }}</el-col>
-            </el-row>
-          </div>
-
-        </div>
-      </div>
+      <host-drawer-content :host="hostTemp" />
     </el-drawer>
   </div>
 </template>
 <script>
 import { getHosts, addProjectWeb, updateProjectWeb, getProjectWeb, deleteProjectWeb } from '@/api/resource'
 import { decodeStr } from '@/utils/base64'
+import HostDrawerContent from '@/components/Drawer/HostDrawerContent'
 export default {
+  components: { HostDrawerContent },
   props: {
     env: { type: String, default: null },
     project: { type: String, default: null },
@@ -339,35 +251,3 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
-
-.show-pwd {
-  position: absolute;
-  right: 41%;
-  font-size: 16px;
-  color: $dark_gray;
-  cursor: pointer;
-  user-select: none;
-}
-.drawer-container {
-  padding: 24px;
-  font-size: 14px;
-  line-height: 1.5;
-  word-wrap: break-word;
-
-  .drawer-title {
-    margin-bottom: 12px;
-    color: rgba(0, 0, 0, .85);
-    line-height: 22px;
-  }
-
-  .drawer-item {
-    color: rgba(0, 0, 0, .65);
-    font-size: 14px;
-    padding: 12px 0;
-  }
-}
-</style>

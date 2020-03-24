@@ -106,10 +106,10 @@ export const asyncRoutes = [
         meta: { 'title': '主机' }
       },
       {
-        path: 'instanceJava',
-        component: () => import('@/views/resource/instance/java'),
-        name: 'InstanceJava',
-        meta: { 'title': 'Java 实例' }
+        path: 'javaPackage',
+        component: () => import('@/views/resource/JavaPackage'),
+        name: 'JavaPackage',
+        meta: { 'title': 'JAR 包' }
       },
       {
         path: 'project',

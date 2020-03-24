@@ -32,6 +32,7 @@
 import Vue from 'vue'
 import { getProjects } from '@/api/resource'
 export default {
+  name: 'TreeProject',
   data() {
     return {
       treeData: [],
@@ -55,7 +56,8 @@ export default {
           var id = results[i].id
           var label = results[i].name
           var software = results[i].software
-          var java_package = results[i].java_package
+          // var java_package = results[i].java_package
+          var java_package = []
           var pro_software_children = []
           var pro_java_children = []
           var test_software_children = []

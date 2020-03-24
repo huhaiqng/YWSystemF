@@ -198,102 +198,7 @@
     </el-dialog>
 
     <el-drawer title="详情" :visible.sync="drawerVisible" :with-header="false">
-      <div class="drawer-container">
-        <div>
-          <h3 class="drawer-title">详情</h3>
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">主机名：</el-col>
-              <el-col :span="12">{{ temp.name }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">IP 地址：</el-col>
-              <el-col :span="12">{{ temp.ip }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">版本：</el-col>
-              <el-col :span="12">{{ temp.version }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">CPU 核数：</el-col>
-              <el-col :span="12">{{ temp.cpu }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">内存大小：</el-col>
-              <el-col :span="12">{{ temp.memory }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">硬盘大小：</el-col>
-              <el-col :span="12">{{ temp.disk }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">位置：</el-col>
-              <el-col :span="12">{{ temp.position }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">系统管理员：</el-col>
-              <el-col :span="12">{{ temp.admin }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">密码：</el-col>
-              <el-col :span="12">{{ temp.password }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">类别：</el-col>
-              <el-col :span="12">{{ temp.type }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">环境：</el-col>
-              <el-col :span="12">{{ temp.env }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">状态：</el-col>
-              <el-col :span="12">{{ temp.ins_num === 0 ? "空闲":"使用中" }}</el-col>
-            </el-row>
-          </div>
-
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">创建时间：</el-col>
-              <el-col :span="12">{{ temp.created | parseTime('{y}-{m}-{d} {h}:{m}') }}</el-col>
-            </el-row>
-          </div>
-
-        </div>
-      </div>
+      <host-drawer-content :host="temp" />
     </el-drawer>
   </div>
 </template>
@@ -305,10 +210,11 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 import { encodeStr, decodeStr } from '@/utils/base64'
+import HostDrawerContent from '@/components/Drawer/HostDrawerContent'
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination, UploadExcelComponent },
+  components: { Pagination, UploadExcelComponent, HostDrawerContent },
   directives: { waves },
   data() {
     return {
@@ -574,36 +480,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
-
-.show-pwd {
-  position: absolute;
-  right: 41%;
-  font-size: 16px;
-  color: $dark_gray;
-  cursor: pointer;
-  user-select: none;
-}
-.drawer-container {
-  padding: 24px;
-  font-size: 14px;
-  line-height: 1.5;
-  word-wrap: break-word;
-
-  .drawer-title {
-    margin-bottom: 12px;
-    color: rgba(0, 0, 0, .85);
-    line-height: 22px;
-  }
-
-  .drawer-item {
-    color: rgba(0, 0, 0, .65);
-    font-size: 14px;
-    padding: 12px 0;
-  }
-}
-</style>

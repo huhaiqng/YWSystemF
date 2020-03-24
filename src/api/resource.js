@@ -44,7 +44,7 @@ export function getSoftware() {
 
 export function getProjectWeb(data) {
   return request({
-    url: '/api/getProjectWeb',
+    url: '/api/getProjectWeb/',
     method: 'get',
     params: data
   })
@@ -70,5 +70,36 @@ export function deleteProjectWeb(id) {
   return request({
     url: `/api/projectWeb/${id}`,
     method: 'delete'
+  })
+}
+
+export function addJavaPackage(data) {
+  return request({
+    url: '/api/javaPackages/',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteJavaPackage(id) {
+  return request({
+    url: `/api/javaPackages/${id}/`,
+    method: 'delete'
+  })
+}
+
+export function updateJavaPackage(data) {
+  return request({
+    url: `/api/javaPackages/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function getJavaPackageList(data) {
+  return request({
+    url: '/api/getJavaPackages/',
+    method: 'get',
+    params: data
   })
 }
