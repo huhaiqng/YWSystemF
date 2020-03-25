@@ -56,8 +56,7 @@ export default {
           var id = results[i].id
           var label = results[i].name
           var software = results[i].software
-          // var java_package = results[i].java_package
-          var java_package = []
+          var java_package = results[i].java_package
           var pro_software_children = []
           var pro_java_children = []
           var test_software_children = []
@@ -83,7 +82,7 @@ export default {
       })
     },
     handleNodeClick(data) {
-      if (data.name === 'pps') {
+      if (data.name === 'pps' && data.label !== 'tomcat') {
         this.env = '生产环境'
         this.project = data.project
         this.software = data.label
@@ -94,7 +93,7 @@ export default {
         this.software = 'tomcat'
         this.jar = data.label
         this.setComponentIs(this.software)
-      } else if (data.name === 'tps') {
+      } else if (data.name === 'tps' && data.label !== 'tomcat') {
         this.env = '测试环境'
         this.project = data.project
         this.software = data.label

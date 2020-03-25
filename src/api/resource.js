@@ -42,6 +42,7 @@ export function getSoftware() {
   })
 }
 
+// ProjectWeb API
 export function getProjectWeb(data) {
   return request({
     url: '/api/getProjectWeb/',
@@ -73,6 +74,7 @@ export function deleteProjectWeb(id) {
   })
 }
 
+// JavaPackage API
 export function addJavaPackage(data) {
   return request({
     url: '/api/javaPackages/',
@@ -101,5 +103,37 @@ export function getJavaPackageList(data) {
     url: '/api/getJavaPackages/',
     method: 'get',
     params: data
+  })
+}
+
+// ProjectTomcat API
+export function getProjectTomcat(data) {
+  return request({
+    url: '/api/getProjectTomcat/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectTomcat(data) {
+  return request({
+    url: '/api/projectTomcat/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectTomcat(data) {
+  return request({
+    url: `/api/projectTomcat/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectTomcat(id) {
+  return request({
+    url: `/api/projectTomcat/${id}`,
+    method: 'delete'
   })
 }

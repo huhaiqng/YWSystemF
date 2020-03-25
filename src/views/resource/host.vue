@@ -235,7 +235,7 @@ export default {
       diskOptions: ['40G', '80G', '12G'],
       positionOptions: ['阿里云', '电信机房', '公司机房'],
       adminOptions: ['root', 'administrator'],
-      typeOptions: ['nginx', 'apache', 'java', 'mysql', 'oracle', 'mongodb', 'redis', 'zookeeper', 'kafka'],
+      typeOptions: '',
       envOptions: ['测试环境', '生产环境'],
       dialogUploadVisible: false,
       temp: {
@@ -272,7 +272,7 @@ export default {
   created() {
     this.getList()
     getSoftware().then(response => {
-      this.typeOptions = response.results
+      this.typeOptions = response
     })
   },
   methods: {

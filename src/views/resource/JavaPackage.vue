@@ -146,6 +146,11 @@ export default {
         this.getProjectList()
       })
     },
+    getProjectList() {
+      getProjects().then(response => {
+        this.projectList = response
+      })
+    },
     restTemp() {
       this.temp = {
         name: '',
@@ -157,11 +162,6 @@ export default {
         created: new Date()
       }
     },
-    getProjectList() {
-      getProjects().then(response => {
-        this.projectList = response
-      })
-    },
     handleCreate() {
       this.dialogStatus = 'create'
       this.dialogVisible = true
@@ -171,10 +171,8 @@ export default {
       this.temp = Object.assign({}, row)
       this.dialogStatus = 'edit'
       this.dialogVisible = true
-      console.log(this.projectList)
-      console.log(row.project)
       var pjs = this.projectList.filter(item => item.name === row.project)
-      console.log(pjs)
+      this.temp.project = pjs[0].id
     },
     handleDelete(id) {
       this.$confirm('确认删除', '提示', {
