@@ -24,7 +24,6 @@
 
     <el-table
       :key="tableKey"
-      v-loading="listLoading"
       :data="list"
       border
       fit
@@ -221,7 +220,6 @@ export default {
       tableKey: 0,
       list: null,
       total: 0,
-      listLoading: true,
       listQuery: {
         page: 1,
         ip: '',
@@ -277,11 +275,9 @@ export default {
   },
   methods: {
     getList() {
-      this.listLoading = true
       getHosts(this.listQuery).then(response => {
         this.list = response.results
         this.total = response.count
-        this.listLoading = false
       })
     },
     handleFilter() {
