@@ -137,3 +137,59 @@ export function deleteProjectTomcat(id) {
     method: 'delete'
   })
 }
+
+// MySQLDB API
+export function getMySQLDB(data) {
+  return request({
+    url: '/api/getMysqldb/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addMySQLDB(data) {
+  return request({
+    url: '/api/mysqldb/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateMySQLDB(data) {
+  return request({
+    url: `/api/mysqldb/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteMySQLDB(id) {
+  return request({
+    url: `/api/mysqldb/${id}`,
+    method: 'delete'
+  })
+}
+
+// ProjectMySQLDB API
+export function addProjectMySQLDB(data) {
+  return request({
+    url: '/api/projectMysqldb/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectMySQLDB(data) {
+  return request({
+    url: `/api/projectMysqldb/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectMySQLDB(id) {
+  return request({
+    url: `/api/projectMysqldb/${id}`,
+    method: 'delete'
+  })
+}

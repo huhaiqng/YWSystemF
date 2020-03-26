@@ -66,7 +66,7 @@
     <el-dialog title="新增" :visible.sync="dialogVisible">
       <el-form ref="formData" :model="temp" label-position="left" label-width="100px" style="margin-left:30px;margin-right:30px">
         <el-form-item label="服务器" prop="host">
-          <el-select v-model="projectTomcatHost" multiple placeholder="选择服务器" style="width:60%">
+          <el-select v-model="temp.host" multiple placeholder="选择服务器" style="width:60%">
             <el-option v-for="item in hostList" :key="item.id" :label="item.ip" :value="item.id" />
           </el-select>
         </el-form-item>
@@ -97,7 +97,6 @@ export default {
     return {
       list: [],
       packageFile: '',
-      projectTomcatHost: [],
       tableKey: 0,
       hostList: [],
       dialogVisible: false,
@@ -155,7 +154,6 @@ export default {
         host: null,
         created: new Date()
       }
-      this.projectTomcatHost = []
     },
     handleCreate() {
       this.dialogVisible = true
@@ -165,19 +163,16 @@ export default {
       })
     },
     createData() {
-      for (var i = 0; i < this.projectTomcatHost.length; i++) {
-        this.temp.host = this.projectTomcatHost[i]
-        addProjectTomcat(this.temp).then(() => {
-          this.$notify({
-            title: '成功',
-            message: '新增成功！',
-            type: 'success',
-            duration: 2000
-          })
-          this.dialogVisible = false
-          this.getList()
+      addProjectTomcat(this.temp).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '新增成功！',
+          type: 'success',
+          duration: 2000
         })
-      }
+        this.dialogVisible = false
+        this.getList()
+      })
     },
     handleHostInfo(h) {
       this.hostTemp = Object.assign({}, h)

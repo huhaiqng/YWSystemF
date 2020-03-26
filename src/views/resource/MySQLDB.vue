@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="queryList.name" placeholder="包名" style="width:200px" class="filter-item" @keyup.enter.native="getList" />
+      <el-input v-model="queryList.name" placeholder="数据库名" style="width:200px" class="filter-item" @keyup.enter.native="getList" />
       <el-select v-model="queryList.project" placeholder="项目名" clearable class="filter-item" style="width: 150px">
         <el-option v-for="item in projectList" :key="item.name" :label="item.name" :value="item.name" />
       </el-select>
@@ -18,34 +18,19 @@
           <span>{{ $index + 1 + (queryList.page - 1)*queryList.limit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="包名" align="center">
+      <el-table-column label="数据库名" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
+          <span class="link-type" @click="showDetail(row)">{{ row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="项目" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.project }}</span>
+          <span>{{ row.project.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="端口号" align="center">
+      <el-table-column label="用户名" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.port }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="部署路径" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.deploy_dir }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="获取地址" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.download_addr }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="功能" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.func }}</span>
+          <span>{{ row.username }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center">
@@ -68,25 +53,22 @@
     <pagination v-show="total>0" :total="total" :page.sync="queryList.page" :limit.sync="queryList.limit" @pagination="getList" />
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
       <el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style="margin-right:30px; margin-left:30px;">
-        <el-form-item label="包名" prop="name">
+        <el-form-item label="数据库名" prop="name">
           <el-input v-model="temp.name" style="width:60%" />
         </el-form-item>
-        <el-form-item label="端口号" prop="port">
-          <el-input v-model="temp.port" style="width:60%" />
-        </el-form-item>
-        <el-form-item label="项目" prop="project">
+        <el-form-item label="项目名" prop="project">
           <el-select v-model="temp.project" class="filter-item" style="width:60%">
             <el-option v-for="item in projectList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="部署路径" prop="deploy_dir">
-          <el-input v-model="temp.deploy_dir" style="width:60%" />
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="temp.username" style="width:60%" />
         </el-form-item>
-        <el-form-item label="选择地址" prop="download_addr">
-          <el-input v-model="temp.download_addr" style="width:60%" />
+        <el-form-item label="生产环境密码" prop="pro_password">
+          <el-input v-model="temp.pro_password" style="width:60%" />
         </el-form-item>
-        <el-form-item label="功能" prop="func">
-          <el-input v-model="temp.func" style="width:60%" />
+        <el-form-item label="测试环境密码" prop="test_password">
+          <el-input v-model="temp.test_password" style="width:60%" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -98,15 +80,20 @@
         </el-button>
       </div>
     </el-dialog>
+    <el-drawer title="详情" :visible.sync="drawerVisible" :with-header="false">
+      <mysqldb :mysqldb="mysqldb" />
+    </el-drawer>
   </div>
 </template>
 
 <script>
-import { getProjects, addJavaPackage, getJavaPackageList, deleteJavaPackage, updateJavaPackage } from '@/api/resource'
+import { getProjects, addMySQLDB, deleteMySQLDB, updateMySQLDB, getMySQLDB } from '@/api/resource'
 import Pagination from '@/components/Pagination'
+import { encodeStr, decodeStr } from '@/utils/base64'
+import Mysqldb from '@/components/Drawer/mysqldb'
 export default {
-  name: 'JavaPackage',
-  components: { Pagination },
+  name: 'MySQLDB',
+  components: { Pagination, Mysqldb },
   data() {
     return {
       list: null,
@@ -114,11 +101,10 @@ export default {
       total: 0,
       temp: {
         name: '',
-        port: 8080,
         project: '',
-        deploy_dir: '',
-        download_addr: '',
-        func: '',
+        username: '',
+        pro_password: '',
+        test_password: '',
         created: new Date()
       },
       queryList: {
@@ -132,7 +118,9 @@ export default {
       textMap: {
         create: '新增',
         edit: '编辑'
-      }
+      },
+      drawerVisible: false,
+      mysqldb: ''
     }
   },
   created() {
@@ -140,7 +128,7 @@ export default {
   },
   methods: {
     getList() {
-      getJavaPackageList(this.queryList).then(response => {
+      getMySQLDB(this.queryList).then(response => {
         this.list = response.results
         this.total = response.count
         this.getProjectList()
@@ -154,11 +142,10 @@ export default {
     restTemp() {
       this.temp = {
         name: '',
-        port: 8080,
         project: '',
-        deploy_dir: '',
-        download_addr: '',
-        func: '',
+        username: '',
+        pro_password: '',
+        test_password: '',
         created: new Date()
       }
     },
@@ -169,10 +156,11 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row)
+      this.temp.pro_password = decodeStr(this.temp.pro_password)
+      this.temp.test_password = decodeStr(this.temp.test_password)
       this.dialogStatus = 'edit'
       this.dialogVisible = true
-      var pjs = this.projectList.filter(item => item.name === row.project)
-      this.temp.project = pjs[0].id
+      this.temp.project = row.project.id
     },
     handleDelete(id) {
       this.$confirm('确认删除', '提示', {
@@ -180,7 +168,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteJavaPackage(id).then(() => {
+        deleteMySQLDB(id).then(() => {
           this.$notify({
             title: '成功',
             message: '删除成功！',
@@ -197,7 +185,9 @@ export default {
       })
     },
     createData() {
-      addJavaPackage(this.temp).then(response => {
+      this.temp.pro_password = encodeStr(this.temp.pro_password)
+      this.temp.test_password = encodeStr(this.temp.test_password)
+      addMySQLDB(this.temp).then(response => {
         this.getList()
         this.dialogVisible = false
         this.$notify({
@@ -209,7 +199,9 @@ export default {
       })
     },
     updateData() {
-      updateJavaPackage(this.temp).then(() => {
+      this.temp.pro_password = encodeStr(this.temp.pro_password)
+      this.temp.test_password = encodeStr(this.temp.test_password)
+      updateMySQLDB(this.temp).then(() => {
         this.getList()
         this.dialogVisible = false
         this.$notify({
@@ -219,6 +211,12 @@ export default {
           duration: 2000
         })
       })
+    },
+    showDetail(row) {
+      this.mysqldb = Object.assign({}, row)
+      this.mysqldb.pro_password = decodeStr(this.mysqldb.pro_password)
+      this.mysqldb.test_password = decodeStr(this.mysqldb.test_password)
+      this.drawerVisible = true
     }
   }
 }

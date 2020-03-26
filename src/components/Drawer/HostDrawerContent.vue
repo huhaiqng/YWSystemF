@@ -122,7 +122,7 @@ $light_gray:#eee;
   user-select: none;
 }
 .drawer-container {
-  padding: 24px;
+  padding: 60px;
   font-size: 14px;
   line-height: 1.5;
   word-wrap: break-word;

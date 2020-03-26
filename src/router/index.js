@@ -112,6 +112,12 @@ export const asyncRoutes = [
         meta: { 'title': 'JAR 包' }
       },
       {
+        path: 'MySQLDB',
+        component: () => import('@/views/resource/MySQLDB'),
+        name: 'MySQLDB',
+        meta: { 'title': 'MySQL DB' }
+      },
+      {
         path: 'project',
         component: () => import('@/views/resource/project'),
         name: 'Project',
