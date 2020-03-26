@@ -227,7 +227,7 @@ export default {
         ip: '',
         type: '',
         env: '',
-        limit: 20
+        limit: 10
       },
       versionOptions: ['CentOS 6', 'CentOS 7', 'Windows Server 2008 R2'],
       cpuOptions: [4, 8, 16],
