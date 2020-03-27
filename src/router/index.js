@@ -148,6 +148,34 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/auth_permission',
+    component: Layout,
+    redirect: '/auth_permission/user',
+    name: 'AuthPermission',
+    meta: {
+      title: '认证权限',
+      icon: 'password'
+    },
+    children: [
+      {
+        path: 'user',
+        component: () => import('@/views/auth-permission/user'),
+        name: 'User',
+        meta: {
+          title: '系统用户'
+        }
+      },
+      {
+        path: 'group',
+        component: () => import('@/views/auth-permission/group'),
+        name: 'Group',
+        meta: {
+          title: '用户组'
+        }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

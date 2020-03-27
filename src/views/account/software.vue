@@ -5,7 +5,7 @@
         新增
       </el-button>
     </div>
-    <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width:100%">
+    <el-table :key="tableKey" :data="list" border fit highlight-current-row style="width:100%">
       <el-table-column label="序号" align="center" width="50px">
         <template slot-scope="{$index}">
           <span>{{ $index + 1 + (listQuery.page - 1)*listQuery.limit }}</span>
@@ -103,7 +103,6 @@ export default {
       tableKey: 0,
       list: null,
       total: 0,
-      listLoading: true,
       temp: {
         username: null,
         password: null,
@@ -112,7 +111,7 @@ export default {
       },
       listQuery: {
         page: 1,
-        limit: 20
+        limit: 10
       },
       dialogVisible: false,
       dialogStatus: null,
@@ -141,12 +140,10 @@ export default {
       this.dialogStatus = 'edit'
     },
     getList() {
-      this.listLoading = true
       getAccounts(this.listQuery).then(response => {
         this.list = response.results
         this.total = response.count
         setTimeout(() => {
-          this.listLoading = false
         }, 1.5 * 1000)
       })
     },

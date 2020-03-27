@@ -111,7 +111,7 @@ export default {
         name: '',
         project: '',
         page: 0,
-        limit: 20
+        limit: 10
       },
       dialogStatus: 'create',
       dialogVisible: false,

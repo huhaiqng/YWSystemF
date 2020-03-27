@@ -7,11 +7,16 @@
     <div class="right-menu">
       <template v-if="device!=='mobile'">
         <span class="right-menu-item">{{ username }}</span>
-        <el-tooltip class="item" effect="dark" content="退出" placement="bottom">
-          <div class="right-menu-item hover-effect" style="padding-right: 20px;">
-            <svg-icon icon-class="user" @click="logout" />
+        <el-dropdown class="right-menu-item">
+          <div class="right-menu-item hover-effect el-dropdown-link" style="padding-right: 20px;">
+            <svg-icon icon-class="user" />
+            <i class="el-icon-caret-bottom" />
           </div>
-        </el-tooltip>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>更改密码</el-dropdown-item>
+            <el-dropdown-item divided @click.native="logout">退出</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </template>
     </div>
   </div>
