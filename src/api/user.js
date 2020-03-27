@@ -30,3 +30,34 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function getGroup(data) {
+  return request({
+    url: '/api/groups/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addGroup(data) {
+  return request({
+    url: '/api/groups/',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteGroup(id) {
+  return request({
+    url: `/api/groups/${id}`,
+    method: 'delete'
+  })
+}
+
+export function updateGroup(data) {
+  return request({
+    url: `/api/groups/${data.id}`,
+    method: 'put',
+    data
+  })
+}
