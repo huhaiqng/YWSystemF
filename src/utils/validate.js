@@ -85,3 +85,8 @@ export function isArray(arg) {
   }
   return Array.isArray(arg)
 }
+
+export function validPassword(password) {
+  const reg = /^.*(?=.{6,12})(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*).*$/
+  return reg.test(password)
+}

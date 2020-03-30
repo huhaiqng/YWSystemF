@@ -18,7 +18,7 @@
       </el-table-column>
       <el-table-column label="用户" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.use }}</span>
+          <span v-for="(u, i) in row.user_set" :key="u.id">{{ i === 0?u.username:", " + u.username }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="150px">

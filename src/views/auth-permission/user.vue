@@ -13,17 +13,27 @@
       </el-table-column>
       <el-table-column label="用户名" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="showDetail(row)">{{ row.username }}</span>
+          <span>{{ row.username }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用途" align="center">
+      <el-table-column label="邮箱" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.use }}</span>
+          <span>{{ row.email }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="超级用户" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.is_superuser?"是":"否" }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="组" align="center">
+        <template slot-scope="{row}">
+          <span v-for="(g, i) in row.groups" :key="g.id">{{ i===0?g.name:", " + g.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.created | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ row.date_joined | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="150px">
@@ -35,144 +45,173 @@
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
-      <el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style="margin-left:30px;margin-right:30px">
+      <el-form ref="temp" :model="temp" :rules="formRules" label-position="left" label-width="100px" style="margin-left:30px;margin-right:30px">
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="temp.username" style="width:60%" placeholder="用户名" />
+          <el-input v-model="temp.username" style="width:60%" />
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input ref="password" v-model="temp.password" style="width:60%" :type="passwordType" placeholder="密码" />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
+          <el-input v-if="setPasswordStatus" ref="password" v-model="temp.password" type="password" placeholder="******" style="width:60%" />
+          <el-button v-if="!setPasswordStatus" round size="mini" icon="el-icon-edit" @click="handelChangePassword">修改密码</el-button>
         </el-form-item>
-        <el-form-item label="用途" prop="use">
-          <el-input v-model="temp.use" style="width:100%" placeholder="用途" />
+        <el-form-item v-if="setPasswordStatus" label="确认密码" prop="confirm_password">
+          <el-input ref="confirm_password" v-model="temp.confirm_password" type="password" placeholder="******" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input ref="email" v-model="temp.email" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="组" prop="groups">
+          <el-select v-model="temp.groups" multiple style="width:60%">
+            <el-option v-for="item in groupList" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="超级用户" prop="use">
+          <el-checkbox v-model="temp.is_superuser">是</el-checkbox>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">
+        <el-button @click="handelCancel('temp')">
           取消
         </el-button>
-        <el-button type="primary" @click="dialogStatus === 'create'?createData():updateData()">
+        <el-button type="primary" @click="dialogStatus === 'create'?createData('temp'):updateData('temp')">
           确定
         </el-button>
       </div>
     </el-dialog>
-    <el-drawer title="详情" :visible.sync="drawerVisible" :with-header="false">
-      <div class="drawer-container">
-        <div>
-          <h3 class="drawer-title">详情</h3>
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">用户名：</el-col>
-              <el-col :span="12">{{ temp.username }}</el-col>
-            </el-row>
-          </div>
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">密码：</el-col>
-              <el-col :span="12">{{ temp.password }}</el-col>
-            </el-row>
-          </div>
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">用途：</el-col>
-              <el-col :span="12">{{ temp.use }}</el-col>
-            </el-row>
-          </div>
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">创建时间：</el-col>
-              <el-col :span="12">{{ temp.created | parseTime('{y}-{m}-{d} {h}:{m}') }}</el-col>
-            </el-row>
-          </div>
-        </div>
-      </div>
-    </el-drawer>
   </div>
 </template>
 <script>
 import Pagination from '@/components/Pagination'
-import { getAccounts, addAccount, updateAccount, deleteAccount } from '@/api/account'
-import { encodeStr, decodeStr } from '@/utils/base64'
+import { getUser, addUser, updateUser, deleteUser, getGroup } from '@/api/user'
+import { validPassword } from '@/utils/validate'
 export default {
   name: 'Software',
   components: { Pagination },
   data() {
+    const validatePassword = (rule, value, callback) => {
+      if (!validPassword(value)) {
+        callback(new Error('密码必须是6到12位，包含数字和大小写字母'))
+      } else {
+        callback()
+      }
+    }
+    const validateConfirmPassword = (rule, value, callback) => {
+      if (value !== this.temp.password) {
+        callback(new Error('2次密码输入不一致'))
+      } else {
+        callback()
+      }
+    }
     return {
       tableKey: 0,
       list: null,
+      groupList: null,
       total: 0,
       temp: {
         username: null,
         password: null,
-        use: null,
-        created: new Date()
+        confirm_password: null,
+        is_superuser: false,
+        email: null,
+        is_staff: false,
+        date_joined: new Date(),
+        groups: []
       },
       listQuery: {
         page: 1,
         limit: 10
       },
+      groupListQuery: {
+        page: 1,
+        limit: 10000
+      },
       dialogVisible: false,
       dialogStatus: null,
-      passwordType: 'password',
-      drawerVisible: false,
       textMap: {
         create: '新增',
         edit: '编辑'
-      }
+      },
+      formRules: {
+        password: [{ trigger: 'blur', validator: validatePassword }],
+        confirm_password: [{ trigger: 'blur', validator: validateConfirmPassword }]
+      },
+      setPasswordStatus: true
     }
   },
   created() {
     this.getList()
   },
   methods: {
+    getList() {
+      getUser(this.listQuery).then(response => {
+        this.list = response.results
+        this.total = response.count
+      })
+    },
+    getGroupList() {
+      getGroup(this.groupListQuery).then(response => {
+        this.groupList = response
+      })
+    },
     handleCreate() {
       this.dialogVisible = true
       this.resetTemp()
       this.dialogStatus = 'create'
+      this.getGroupList()
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row)
-      this.passwordType = 'password'
-      this.temp.password = decodeStr(this.temp.password)
+      this.temp.groups = this.temp.groups.map(h => h.id)
       this.dialogVisible = true
       this.dialogStatus = 'edit'
+      this.setPasswordStatus = false
+      this.getGroupList()
     },
-    getList() {
-      getAccounts(this.listQuery).then(response => {
-        this.list = response.results
-        this.total = response.count
-        setTimeout(() => {
-        }, 1.5 * 1000)
+    createData(userForm) {
+      this.$refs[userForm].validate((valid) => {
+        if (valid) {
+          addUser(this.temp).then(() => {
+            this.getList()
+            this.dialogVisible = false
+            this.$notify({
+              title: '成功',
+              message: '账号新增成功！',
+              type: 'success',
+              duration: 2000
+            })
+          })
+        }
       })
     },
-    createData() {
-      this.temp.password = encodeStr(this.temp.password)
-      addAccount(this.temp).then(() => {
-        this.list.unshift(this.temp)
-        this.dialogVisible = false
-        this.$notify({
-          title: '成功',
-          message: '账号新增成功！',
-          type: 'success',
-          duration: 2000
+    updateData(userForm) {
+      if (this.setPasswordStatus) {
+        this.$refs[userForm].validate((valid) => {
+          if (valid) {
+            updateUser(this.temp).then(() => {
+              this.getList()
+              this.$refs[userForm].resetFields()
+              this.dialogVisible = false
+              this.$notify({
+                title: '成功',
+                message: '更新成功',
+                type: 'success',
+                duration: 2000
+              })
+            })
+          }
         })
-      })
-    },
-    updateData() {
-      this.temp.password = encodeStr(this.temp.password)
-      updateAccount(this.temp).then(() => {
-        const index = this.list.findIndex(v => v.id === this.temp.id)
-        this.list.splice(index, 1, this.temp)
-        this.dialogVisible = false
-        this.$notify({
-          title: '成功',
-          message: '更新成功',
-          type: 'success',
-          duration: 2000
+      } else {
+        updateUser(this.temp).then(() => {
+          this.getList()
+          this.$refs[userForm].resetFields()
+          this.dialogVisible = false
+          this.$notify({
+            title: '成功',
+            message: '更新成功',
+            type: 'success',
+            duration: 2000
+          })
         })
-      })
+      }
     },
     deleteData(id, index) {
       this.$confirm('确认删除', '提示', {
@@ -180,7 +219,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteAccount(id).then(() => {
+        deleteUser(id).then(() => {
           this.$notify({
             title: '成功',
             message: '删除成功！',
@@ -196,47 +235,27 @@ export default {
         })
       })
     },
-    showDetail(row) {
-      this.temp = Object.assign({}, row)
-      this.temp.password = decodeStr(this.temp.password)
-      this.drawerVisible = true
-    },
-    showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
-      } else {
-        this.passwordType = 'password'
-      }
+    handelCancel(form) {
+      this.$refs[form].resetFields()
+      this.dialogVisible = false
     },
     resetTemp() {
       this.temp = {
         username: null,
         password: null,
-        use: null,
-        created: new Date()
+        confirm_password: null,
+        is_superuser: false,
+        email: null,
+        is_staff: false,
+        date_joined: new Date(),
+        groups: []
       }
-      this.passwordType = 'password'
+      this.setPasswordStatus = true
+    },
+    handelChangePassword() {
+      this.setPasswordStatus = true
+      this.temp.password = ''
     }
   }
 }
 </script>
-<style lang="scss" scoped>
-.drawer-container {
-  padding: 24px;
-  font-size: 14px;
-  line-height: 1.5;
-  word-wrap: break-word;
-
-  .drawer-title {
-    margin-bottom: 12px;
-    color: rgba(0, 0, 0, .85);
-    line-height: 22px;
-  }
-
-  .drawer-item {
-    color: rgba(0, 0, 0, .65);
-    font-size: 14px;
-    padding: 12px 0;
-  }
-}
-</style>

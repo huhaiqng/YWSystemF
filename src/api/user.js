@@ -31,9 +31,10 @@ export function logout() {
   })
 }
 
+// Group API
 export function getGroup(data) {
   return request({
-    url: '/api/groups/',
+    url: '/api/getGroups/',
     method: 'get',
     params: data
   })
@@ -49,14 +50,54 @@ export function addGroup(data) {
 
 export function deleteGroup(id) {
   return request({
-    url: `/api/groups/${id}`,
+    url: `/api/groups/${id}/`,
     method: 'delete'
   })
 }
 
 export function updateGroup(data) {
   return request({
-    url: `/api/groups/${data.id}`,
+    url: `/api/groups/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+// Group API
+export function getUser(data) {
+  return request({
+    url: '/api/getUsers/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addUser(data) {
+  return request({
+    url: '/api/users/',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteUser(id) {
+  return request({
+    url: `/api/users/${id}/`,
+    method: 'delete'
+  })
+}
+
+export function updateUser(data) {
+  return request({
+    url: `/api/users/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function changeMyPassword(data) {
+  return request({
+    url: '/api/changeMyPassword/',
     method: 'put',
     data
   })

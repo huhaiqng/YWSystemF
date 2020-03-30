@@ -6,19 +6,41 @@
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <span class="right-menu-item">{{ username }}</span>
+        <span class="right-menu-item">{{ userTemp.username }}</span>
         <el-dropdown class="right-menu-item">
           <div class="right-menu-item hover-effect el-dropdown-link" style="padding-right: 20px;">
             <svg-icon icon-class="user" />
             <i class="el-icon-caret-bottom" />
           </div>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>更改密码</el-dropdown-item>
+            <el-dropdown-item @click.native="handleChangeMyPassword">更改密码</el-dropdown-item>
             <el-dropdown-item divided @click.native="logout">退出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </template>
     </div>
+    <el-dialog title="修改密码" :visible.sync="dialogVisible" width="30%">
+      <el-form ref="userTemp" :model="userTemp" :rules="formRules" label-position="left" label-width="100px" style="margin-left:30px;margin-right:30px">
+        <el-form-item label="旧密码" prop="old_password">
+          <el-input ref="old_password" v-model="userTemp.old_password" type="password" placeholder="******" />
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input ref="password" v-model="userTemp.password" type="password" placeholder="******" />
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirm_password">
+          <el-input ref="confirm_password" v-model="userTemp.confirm_password" type="password" placeholder="******" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handelCancel('userTemp')">
+          取消
+        </el-button>
+        <el-button type="primary" @click="updateData('userTemp')">
+          确定
+        </el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -27,15 +49,42 @@ import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import { getUserName } from '@/utils/auth'
-
+import { validPassword } from '@/utils/validate'
+import { changeMyPassword } from '@/api/user'
 export default {
   components: {
     Breadcrumb,
     Hamburger
   },
   data() {
+    const validatePassword = (rule, value, callback) => {
+      if (!validPassword(value)) {
+        callback(new Error('密码必须是6到12位，包含数字和大小写字母'))
+      } else if (this.userTemp.old_password === value) {
+        callback(new Error('新旧密码不能一样'))
+      } else {
+        callback()
+      }
+    }
+    const validateConfirmPassword = (rule, value, callback) => {
+      if (value !== this.userTemp.password) {
+        callback(new Error('2次密码输入不一致'))
+      } else {
+        callback()
+      }
+    }
     return {
-      username: getUserName()
+      userTemp: {
+        username: getUserName(),
+        old_password: null,
+        password: null,
+        confirm_password: null
+      },
+      dialogVisible: false,
+      formRules: {
+        password: [{ trigger: 'blur', validator: validatePassword }],
+        confirm_password: [{ trigger: 'blur', validator: validateConfirmPassword }]
+      }
     }
   },
   computed: {
@@ -52,6 +101,38 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    handleChangeMyPassword() {
+      this.dialogVisible = true
+      this.resetUserTemp()
+    },
+    handelCancel(form) {
+      this.$refs[form].resetFields()
+      this.dialogVisible = false
+    },
+    resetUserTemp() {
+      this.userTemp = {
+        username: getUserName(),
+        old_password: null,
+        password: null,
+        confirm_password: null
+      }
+    },
+    updateData(form) {
+      this.$refs[form].validate((valid) => {
+        if (valid) {
+          changeMyPassword(this.userTemp).then(() => {
+            this.dialogVisible = false
+            this.$notify({
+              title: '成功',
+              message: '密码修改完成！',
+              type: 'success',
+              duration: 2000
+            })
+          })
+        }
+      })
+      console.log(this.userTemp)
     }
   }
 }
