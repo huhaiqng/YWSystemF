@@ -121,6 +121,34 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/task-cener',
+    component: Layout,
+    redirect: '/task-center/task',
+    name: 'TaskCenter',
+    meta: {
+      title: '任务中心',
+      icon: 'password'
+    },
+    children: [
+      {
+        path: 'task',
+        component: () => import('@/views/task-center/task'),
+        name: 'Task',
+        meta: {
+          title: '任务'
+        }
+      },
+      {
+        path: 'ExecTask',
+        component: () => import('@/views/task-center/ExecTask'),
+        name: 'ExecTask',
+        meta: {
+          title: '执行任务'
+        }
+      }
+    ]
+  },
+  {
     path: '/account',
     component: Layout,
     redirect: '/account/software',

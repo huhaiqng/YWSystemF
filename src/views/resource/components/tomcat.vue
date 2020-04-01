@@ -13,7 +13,7 @@
       <el-button type="success" plain>启动</el-button>
       <el-button type="success" plain>停止</el-button>
       <el-button type="success" plain>重启</el-button>
-      <el-button type="success" plain @click="checkJarStatus">检查</el-button>
+      <el-button type="success" plain>检查</el-button>
       <el-select v-model="packageFile" placeholder="选择包" style="margin-left:10px">
         <el-option value="a.jar.01" label="a.jar.01">a.jar.01</el-option>
       </el-select>
@@ -82,11 +82,9 @@
   </div>
 </template>
 <script>
-// import Vue from 'vue'
 import { getHosts, getProjectTomcat, addProjectTomcat, deleteProjectTomcat } from '@/api/resource'
 import { decodeStr } from '@/utils/base64'
 import HostDrawerContent from '@/components/Drawer/HostDrawerContent'
-// import VueSocketIO from 'vue-socket.io'
 export default {
   components: { HostDrawerContent },
   props: {
@@ -143,26 +141,6 @@ export default {
     this.getList()
   },
   methods: {
-    checkJarStatus() {
-      var websock = new WebSocket('ws://' + window.location.host + '/api/task/')
-      websock.onopen = function() {
-        const actions = { 'test': 'abc' }
-        websock.send(JSON.stringify(actions))
-      }
-      websock.onmessage = function(e) {
-        if (e.data === 'closed') {
-          websock.close(1000, 'closed by server')
-        } else {
-          console.log(e.data)
-        }
-      }
-      websock.onclose = function(e) {
-        console.log(e)
-      }
-      // websock.onclose = function() {
-      //   console.log('closed')
-      // }
-    },
     getList() {
       getProjectTomcat(this.queryList).then(response => {
         this.list = response
