@@ -18,7 +18,7 @@
           </el-select>
         </el-form-item>
         <el-form-item prop="hosts">
-          <el-select v-model="filterForm.hosts" value-key="id" placeholder="选择主机" multiple style="width: 450px">
+          <el-select v-model="filterForm.hosts" value-key="id" placeholder="选择主机" multiple style="width: 400px">
             <el-option v-for="h in filterHostList" :key="h.id" :label="h.ip" :value="h" />
           </el-select>
         </el-form-item>
@@ -38,7 +38,7 @@
 <script>
 import { getTask } from '@/api/task'
 import { getSoftware, getHosts } from '@/api/resource'
-import { decodeStr } from '@/utils/base64'
+import { handleExecTask } from '@/api/websocket'
 export default {
   name: 'Task',
   data() {
@@ -100,42 +100,26 @@ export default {
     },
     filterHost() {
       this.filterHostList = this.hostList.filter(h => h.type === this.software)
-      this.hosts = ''
+      this.filterForm.hosts = ''
     },
     filterTask() {
       this.filterTaskList = this.taskList.filter(t => t.type === this.taskType)
-      this.task = ''
+      this.filterForm.task = ''
     },
     execTask(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          document.getElementById('result').innerHTML = ''
-          var websock = new WebSocket('ws://' + window.location.host + '/api/task/')
           this.buttionLoading = true
-          websock.onopen = () => {
-            var toMessage = { 'task': this.filterForm.task, 'hosts': this.getDecodePasswordHost() }
-            websock.send(JSON.stringify(toMessage))
-          }
-          websock.onmessage = (e) => {
-            if (e.data !== 'closed') {
-              document.getElementById('result').append(e.data)
-            } else {
-              websock.close(1000, 'closed by server')
-              this.buttionLoading = false
-            }
-          }
+          var promise = new Promise((resolve, reject) => {
+            handleExecTask(this.filterForm.task, this.filterForm.hosts, resolve)
+          })
+          promise.then(() => {
+            this.buttionLoading = false
+          })
         } else {
           return false
         }
       })
-    },
-    getDecodePasswordHost() {
-      var sendHosts = []
-      for (var i = 0; i < this.filterForm.hosts.length; i++) {
-        sendHosts[i] = Object.assign({}, this.filterForm.hosts[i])
-        sendHosts[i].password = decodeStr(sendHosts[i].password)
-      }
-      return sendHosts
     }
   }
 }

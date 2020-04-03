@@ -127,7 +127,7 @@ export const asyncRoutes = [
     name: 'TaskCenter',
     meta: {
       title: '任务中心',
-      icon: 'password'
+      icon: 'list'
     },
     children: [
       {
