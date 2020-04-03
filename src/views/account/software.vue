@@ -11,7 +11,7 @@
           <span>{{ $index + 1 + (listQuery.page - 1)*listQuery.limit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" align="center">
+      <el-table-column label="用户名" align="center" width="200px">
         <template slot-scope="{row}">
           <span class="link-type" @click="showDetail(row)">{{ row.username }}</span>
         </template>
@@ -21,7 +21,7 @@
           <span>{{ row.use }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center">
+      <el-table-column label="创建时间" align="center" width="200px">
         <template slot-scope="{row}">
           <span>{{ row.created | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>

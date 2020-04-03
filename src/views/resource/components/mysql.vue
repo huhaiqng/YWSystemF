@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-breadcrumb separator-class="el-icon-arrow-right" style="padding-bottom: 20px">
         <el-breadcrumb-item>{{ env }}</el-breadcrumb-item>
-        <el-breadcrumb-item>{{ project }}</el-breadcrumb-item>
+        <el-breadcrumb-item>{{ project.name }}</el-breadcrumb-item>
         <el-breadcrumb-item>{{ software }}</el-breadcrumb-item>
       </el-breadcrumb>
       <div v-for="db in mysqldbList" :key="db.id" style="padding-bottom: 40px;">
@@ -113,7 +113,7 @@ export default {
   components: { HostDrawerContent, Mysqldb },
   props: {
     env: { type: String, default: null },
-    project: { type: String, default: null },
+    project: { type: Object, default: null },
     software: { type: String, default: null }
   },
   data() {
@@ -164,7 +164,7 @@ export default {
       },
       mysqldbQuery: {
         name: '',
-        project: this.project,
+        project: this.project.id,
         limit: 10000
       }
     }

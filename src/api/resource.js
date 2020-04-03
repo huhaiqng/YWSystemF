@@ -28,10 +28,34 @@ export function deleteHost(id) {
   })
 }
 
+// Project API
 export function getProjects() {
   return request({
-    url: '/api/projects/',
+    url: '/api/getProjects/',
     method: 'get'
+  })
+}
+
+export function addProjects(data) {
+  return request({
+    url: '/api/projects/',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteProjects(id) {
+  return request({
+    url: `/api/projects/${id}/`,
+    method: 'delete'
+  })
+}
+
+export function updateProjects(data) {
+  return request({
+    url: `/api/projects/${data.id}/`,
+    method: 'put',
+    data
   })
 }
 
@@ -190,6 +214,38 @@ export function updateProjectMySQLDB(data) {
 export function deleteProjectMySQLDB(id) {
   return request({
     url: `/api/projectMysqldb/${id}`,
+    method: 'delete'
+  })
+}
+
+// ProjectGeneralSoftware API
+export function getProjectGeneralSoftware(data) {
+  return request({
+    url: '/api/getProjectGeneralSoftware/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectGeneralSoftware(data) {
+  return request({
+    url: '/api/projectGeneralSoftware/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectGeneralSoftware(data) {
+  return request({
+    url: `/api/projectGeneralSoftware/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectGeneralSoftware(id) {
+  return request({
+    url: `/api/projectGeneralSoftware/${id}`,
     method: 'delete'
   })
 }

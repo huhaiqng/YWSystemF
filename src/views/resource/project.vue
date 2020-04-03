@@ -22,6 +22,8 @@
           :project="project"
           :software="software"
           :jar="jar"
+          :projects="projects"
+          @getList="getList"
         />
       </el-col>
     </el-row>
@@ -40,21 +42,26 @@ export default {
       env: null,
       project: null,
       software: null,
-      jar: null
+      jar: null,
+      projects: null
     }
   },
   created() {
     this.getList()
+    this.setComponentIs('ProjectList', 'special')
   },
   methods: {
     getList() {
+      this.treeData = []
       getProjects().then(response => {
         var results = response
+        this.projects = response
         var pro_project_children = []
         var test_project_children = []
         for (var i = 0; i < results.length; i++) {
           var id = results[i].id
           var label = results[i].name
+          var project = results[i]
           var software = results[i].software
           var java_package = results[i].java_package
           var pro_software_children = []
@@ -64,52 +71,69 @@ export default {
           for (var x = 0; x < software.length; x++) {
             if (software[x].name === 'tomcat') {
               for (var j = 0; j < java_package.length; j++) {
-                pro_java_children.push({ id: java_package[j].id, name: 'ppst', project: label, label: java_package[j].name })
-                test_java_children.push({ id: java_package[j].id, name: 'tpst', project: label, label: java_package[j].name })
+                // pro_java_children.push({ id: java_package[j].id, name: 'ppst', project: label, label: java_package[j].name })
+                // test_java_children.push({ id: java_package[j].id, name: 'tpst', project: label, label: java_package[j].name })
+                pro_java_children.push({ id: java_package[j].id, name: 'ppst', project: project, label: java_package[j].name })
+                test_java_children.push({ id: java_package[j].id, name: 'tpst', project: project, label: java_package[j].name })
               }
-              pro_software_children.push({ id: software[x].id, name: 'pps', project: label, label: software[x].name, children: pro_java_children })
-              test_software_children.push({ id: software[x].id, name: 'tps', project: label, label: software[x].name, children: test_java_children })
+              // pro_software_children.push({ id: software[x].id, name: 'pps', project: label, label: software[x].name, children: pro_java_children })
+              // test_software_children.push({ id: software[x].id, name: 'tps', project: label, label: software[x].name, children: test_java_children })
+              pro_software_children.push({ id: software[x].id, name: 'pps', project: project, label: software[x].name, children: pro_java_children })
+              test_software_children.push({ id: software[x].id, name: 'tps', project: project, label: software[x].name, children: test_java_children })
             } else {
-              pro_software_children.push({ id: software[x].id, name: 'pps', project: label, label: software[x].name })
-              test_software_children.push({ id: software[x].id, name: 'tps', project: label, label: software[x].name })
+              // pro_software_children.push({ id: software[x].id, type: software[x].type, name: 'pps', project: label, label: software[x].name })
+              // test_software_children.push({ id: software[x].id, type: software[x].type, name: 'tps', project: label, label: software[x].name })
+              pro_software_children.push({ id: software[x].id, type: software[x].type, name: 'pps', project: project, label: software[x].name })
+              test_software_children.push({ id: software[x].id, type: software[x].type, name: 'tps', project: project, label: software[x].name })
             }
           }
           pro_project_children.push({ id: id, label: label, children: pro_software_children })
           test_project_children.push({ id: id, label: label, children: test_software_children })
         }
+        this.treeData.push({ id: 0, label: '项目管理', name: 'project_list' })
         this.treeData.push({ id: 1, label: '生产环境', children: pro_project_children })
         this.treeData.push({ id: 2, label: '测试环境', children: test_project_children })
       })
     },
     handleNodeClick(data) {
+      if (data.name === 'project_list') {
+        this.setComponentIs('ProjectList', 'special')
+      }
       if (data.name === 'pps' && data.label !== 'tomcat') {
         this.env = '生产环境'
         this.project = data.project
         this.software = data.label
-        this.setComponentIs(this.software)
+        this.setComponentIs(this.software, data.type)
       } else if (data.name === 'ppst') {
         this.env = '生产环境'
         this.project = data.project
         this.software = 'tomcat'
         this.jar = data.label
-        this.setComponentIs(this.software)
+        this.setComponentIs(this.software, 'special')
       } else if (data.name === 'tps' && data.label !== 'tomcat') {
         this.env = '测试环境'
         this.project = data.project
         this.software = data.label
-        this.setComponentIs(this.software)
+        this.setComponentIs(this.software, data.type)
       } else if (data.name === 'tpst') {
         this.env = '测试环境'
         this.project = data.project
         this.software = 'tomcat'
         this.jar = data.label
-        this.setComponentIs(this.software)
+        this.setComponentIs(this.software, 'special')
       }
     },
-    setComponentIs(software) {
-      var dir = `./components/${software}`
-      Vue.component(software, () => import(dir))
-      this.currentComponent = software
+    setComponentIs(software, type) {
+      var dir = ''
+      if (type === 'special') {
+        dir = `./components/${software}`
+        Vue.component(software, () => import(dir))
+        this.currentComponent = software
+      } else if (type === 'general') {
+        dir = './components/general'
+        Vue.component(software, () => import(dir))
+        this.currentComponent = software
+      }
     }
   }
 }

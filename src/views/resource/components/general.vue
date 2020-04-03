@@ -5,27 +5,12 @@
         <el-breadcrumb-item>{{ env }}</el-breadcrumb-item>
         <el-breadcrumb-item>{{ project.name }}</el-breadcrumb-item>
         <el-breadcrumb-item>{{ software }}</el-breadcrumb-item>
-        <el-breadcrumb-item>{{ jar }}</el-breadcrumb-item>
       </el-breadcrumb>
       <el-button type="primary" icon="el-icon-edit" @click="handleCreate()">
         添加
       </el-button>
-      <el-button type="success" plain>启动</el-button>
-      <el-button type="success" plain>停止</el-button>
-      <el-button type="success" plain>重启</el-button>
-      <el-button type="success" plain>检查</el-button>
-      <el-select v-model="packageFile" placeholder="选择包" style="margin-left:10px">
-        <el-option value="a.jar.01" label="a.jar.01">a.jar.01</el-option>
-      </el-select>
-      <el-button type="success" plain>发布</el-button>
     </div>
     <el-table :key="tableKey" :data="list" border fit highlight-current-row>
-      <el-table-column type="selection" width="40" align="center" />
-      <el-table-column label="包名" align="center">
-        <template>
-          <span>{{ jar }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="IP 地址" align="center">
         <template slot-scope="{row}">
           <span class="link-type" @click="handleHostInfo(row.host)">{{ row.host.ip }}</span>
@@ -82,7 +67,7 @@
   </div>
 </template>
 <script>
-import { getHosts, getProjectTomcat, addProjectTomcat, deleteProjectTomcat } from '@/api/resource'
+import { getHosts, getProjectGeneralSoftware, addProjectGeneralSoftware, deleteProjectGeneralSoftware } from '@/api/resource'
 import { decodeStr } from '@/utils/base64'
 import HostDrawerContent from '@/components/Drawer/HostDrawerContent'
 export default {
@@ -90,20 +75,18 @@ export default {
   props: {
     env: { type: String, default: null },
     project: { type: Object, default: null },
-    software: { type: String, default: null },
-    jar: { type: String, default: null }
+    software: { type: String, default: null }
   },
   data() {
     return {
       list: [],
-      packageFile: '',
       tableKey: 0,
       hostList: [],
       dialogVisible: false,
       temp: {
-        package_name: this.jar,
         env: this.env,
         project: this.project.id,
+        software: this.software,
         host: null,
         created: new Date()
       },
@@ -127,7 +110,7 @@ export default {
       queryList: {
         env: this.env,
         project: this.project.id,
-        package_name: this.jar
+        software: this.software
       },
       hostQuery: {
         ip: '',
@@ -142,15 +125,15 @@ export default {
   },
   methods: {
     getList() {
-      getProjectTomcat(this.queryList).then(response => {
+      getProjectGeneralSoftware(this.queryList).then(response => {
         this.list = response
       })
     },
     resetTemp() {
       this.temp = {
-        package_name: this.jar,
         env: this.env,
         project: this.project.id,
+        software: this.software,
         host: null,
         created: new Date()
       }
@@ -163,7 +146,7 @@ export default {
       })
     },
     createData() {
-      addProjectTomcat(this.temp).then(() => {
+      addProjectGeneralSoftware(this.temp).then(() => {
         this.$notify({
           title: '成功',
           message: '新增成功！',
@@ -185,7 +168,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteProjectTomcat(id).then(() => {
+        deleteProjectGeneralSoftware(id).then(() => {
           this.$notify({
             title: '成功',
             message: '删除成功！',
@@ -204,3 +187,4 @@ export default {
   }
 }
 </script>
+
