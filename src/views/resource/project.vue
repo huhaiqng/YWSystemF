@@ -142,8 +142,8 @@ export default {
 .down-tree{
   flex: 1;
   border-right:1px solid rgba(211,219,222,1);
-  min-width: 200px;
-  max-width: 220px;
+  // min-width: 200px;
+  // max-width: 220px;
   background-color: #f0f2f5;
   /deep/.el-scrollbar{
     height: calc(100vh - 84px);
