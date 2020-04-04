@@ -30,7 +30,7 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="序号" align="center" width="50px">
+      <el-table-column label="序号" align="center" width="60px">
         <template slot-scope="{$index}">
           <span>{{ $index + 1 + (listQuery.page - 1)*listQuery.limit }}</span>
         </template>
@@ -87,6 +87,7 @@
           <el-dropdown type="primary">
             <el-button size="mini" split-buttion type="primary">操作<i class="el-icon-arrow-down el-icon--right" /></el-button>
             <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="handleSSHConnectHost(row)">SSH 主机</el-dropdown-item>
               <el-dropdown-item @click.native="handleUpdate(row)">编辑</el-dropdown-item>
               <el-dropdown-item @click.native="handleDelete(row.id, $index)">删除</el-dropdown-item>
               <el-dropdown-item v-if="row.status" @click.native="hostProblem(row, false)">标记故障</el-dropdown-item>
@@ -99,7 +100,7 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="60%">
       <el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style="margin-right:30px; margin-left:30px;">
         <el-form-item label="主机名" prop="name">
           <el-input v-model="temp.name" style="width:60%" placeholder="主机名" />
@@ -210,6 +211,7 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 import { encodeStr, decodeStr } from '@/utils/base64'
 import HostDrawerContent from '@/components/Drawer/HostDrawerContent'
+import { sshConnectHost } from '@/utils/webssh'
 
 export default {
   name: 'ComplexTable',
@@ -472,6 +474,9 @@ export default {
       this.uploadSuccessCount = 0
       this.uploadFailCount = 0
       this.getList()
+    },
+    handleSSHConnectHost(row) {
+      sshConnectHost(row)
     }
   }
 }
