@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-input v-model="queryList.name" placeholder="数据库名" style="width:200px" class="filter-item" @keyup.enter.native="getList" />
       <el-select v-model="queryList.project" placeholder="项目名" clearable class="filter-item" style="width: 150px">
-        <el-option v-for="item in projectList" :key="item.name" :label="item.name" :value="item.name" />
+        <el-option v-for="item in projectList" :key="item.name" :label="item.name" :value="item.id" />
       </el-select>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getList">
         搜索
