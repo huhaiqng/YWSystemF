@@ -325,7 +325,8 @@ export default {
         if (valid) {
           this.temp.password = encodeStr(this.temp.password)
           addHost(this.temp).then(() => {
-            this.list.unshift(this.temp)
+            // this.list.unshift(this.temp)
+            this.getList()
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
@@ -352,8 +353,9 @@ export default {
         if (valid) {
           this.temp.password = encodeStr(this.temp.password)
           updateHost(this.temp).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
+            // const index = this.list.findIndex(v => v.id === this.temp.id)
+            // this.list.splice(index, 1, this.temp)
+            this.getList()
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
@@ -392,7 +394,8 @@ export default {
             type: 'success',
             duration: 2000
           })
-          this.list.splice(index, 1)
+          // this.list.splice(index, 1)
+          this.getList()
         })
       }).catch(() => {
         this.$message({
