@@ -35,6 +35,30 @@
           <el-input v-model="temp.name" style="width:60%" />
         </el-form-item>
       </el-form>
+      <el-tabs v-model="activeName" tab-position="top" type="border-card" style="margin-left:30px;margin-right:30px;">
+        <el-tab-pane label="全局权限" name="first">
+          <div v-for="item in contentType" :key="item.model">
+            <span>{{ modelMap[item.model] }}</span>
+            <el-checkbox-group v-model="temp.permissions" style="margin-top:10px;margin-bottom:20px;">
+              <el-checkbox v-for="perm in item.permission" :key="perm.id" :label="perm.id">{{ permName(perm.codename) }}</el-checkbox>
+            </el-checkbox-group>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="对象权限" name="second">
+          <el-select v-model="permTemp.model" clearable placeholder="请选择模型" @change="getObjects">
+            <el-option v-for="item in contentType" :key="item.id" :label="modelMap[item.model]" :value="item.model" />
+          </el-select>
+          <el-select v-model="permTemp.objects" value-key="id" clearable placeholder="请选择对象" multiple style="margin-left:20px;width:60%;" @change="getObjectPerms()">
+            <el-option v-for="item in objects" :key="item.id" :label="getOptionLabel(item)" :value="item" />
+          </el-select>
+          <div v-for="item in permTemp.objects" :key="item.id" style="margin-top:20px;">
+            <span>{{ getOptionLabel(item) }}</span>
+            <el-checkbox-group v-model="permTemp.permissions" style="margin-top:10px;margin-bottom:20px;">
+              <el-checkbox v-for="perm in objectPermOptions " :key="perm.id" :label="perm.id">{{ permName(perm.codename) }}</el-checkbox>
+            </el-checkbox-group>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">
           取消
@@ -48,7 +72,9 @@
 </template>
 <script>
 import Pagination from '@/components/Pagination'
-import { getGroup, addGroup, updateGroup, deleteGroup } from '@/api/user'
+import { getContentType, getGroup, addGroup, updateGroup, deleteGroup, getUserObjectPerms } from '@/api/user'
+import { getHosts } from '@/api/resource'
+
 export default {
   name: 'Group',
   components: { Pagination },
@@ -58,7 +84,8 @@ export default {
       list: null,
       total: 0,
       temp: {
-        name: null
+        name: null,
+        permissions: []
       },
       listQuery: {
         page: 1,
@@ -69,7 +96,26 @@ export default {
       textMap: {
         create: '新增',
         edit: '编辑'
-      }
+      },
+      activeName: 'first',
+      contentType: [],
+      modelMap: {
+        host: '主机',
+        javapackage: 'JAR 包',
+        project: '项目',
+        task: '任务',
+        mysqldb: 'MySQL DB'
+      },
+      labelMap: {
+        host: 'ip'
+      },
+      permTemp: {
+        model: '',
+        objects: null,
+        permissions: []
+      },
+      objects: [],
+      objectPermOptions: []
     }
   },
   created() {
@@ -90,6 +136,14 @@ export default {
       getGroup(this.listQuery).then(response => {
         this.list = response.results
         this.total = response.count
+      })
+      getContentType().then(response => {
+        this.contentType = []
+        for (var i = 0; i < response.length; i++) {
+          if (this.modelMap[response[i].model]) {
+            this.contentType.push(response[i])
+          }
+        }
       })
     },
     createData() {
@@ -141,6 +195,41 @@ export default {
     resetTemp() {
       this.temp = {
         name: null
+      }
+    },
+    permName(codename) {
+      var permType = codename.split('_')[0]
+      if (permType === 'add') {
+        return '新增'
+      } else if (permType === 'view') {
+        return '查看'
+      } else if (permType === 'change') {
+        return '编辑'
+      } else if (permType === 'delete') {
+        return '删除'
+      } else {
+        return permType
+      }
+    },
+    getObjects() {
+      if (this.permTemp.model === 'host') {
+        var params = { ip: '', type: '', env: '', limit: 10000 }
+        getHosts(params).then(response => {
+          this.objects = response
+        })
+        this.objectPermOptions = this.contentType.filter(ct => { return ct.model === 'host' })[0].permission.filter(c => { return c.codename !== 'add_host' })
+      }
+    },
+    getOptionLabel(item) {
+      if (this.permTemp.model === 'host') {
+        return item.ip
+      }
+    },
+    getObjectPerms() {
+      if (this.permTemp.objects.length > 0) {
+        getUserObjectPerms(this.permTemp).then(response => {
+          console.log(response)
+        })
       }
     }
   }

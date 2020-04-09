@@ -102,3 +102,18 @@ export function changeMyPassword(data) {
     data
   })
 }
+
+export function getContentType() {
+  return request({
+    url: '/api/contentType/',
+    method: 'get'
+  })
+}
+
+export function getUserObjectPerms(data) {
+  return request({
+    url: '/api/getUserObjectPerms',
+    method: 'get',
+    params: data
+  })
+}
