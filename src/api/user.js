@@ -110,9 +110,25 @@ export function getContentType() {
   })
 }
 
-export function getUserObjectPerms(data) {
+export function getGroupObjectPerms(data) {
   return request({
-    url: '/api/getUserObjectPerms',
+    url: '/api/getGroupObjectPerms/',
+    method: 'post',
+    data
+  })
+}
+
+export function setGroupObjectPerms(data) {
+  return request({
+    url: '/api/setGroupObjectPerms/',
+    method: 'post',
+    data
+  })
+}
+
+export function getGroupPerms(data) {
+  return request({
+    url: '/api/getGroupPerms/',
     method: 'get',
     params: data
   })

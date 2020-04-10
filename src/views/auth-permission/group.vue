@@ -36,7 +36,7 @@
         </el-form-item>
       </el-form>
       <el-tabs v-model="activeName" tab-position="top" type="border-card" style="margin-left:30px;margin-right:30px;">
-        <el-tab-pane label="全局权限" name="first">
+        <el-tab-pane label="设置全局权限" name="first">
           <div v-for="item in contentType" :key="item.model">
             <span>{{ modelMap[item.model] }}</span>
             <el-checkbox-group v-model="temp.permissions" style="margin-top:10px;margin-bottom:20px;">
@@ -44,18 +44,35 @@
             </el-checkbox-group>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="对象权限" name="second">
+        <el-tab-pane v-if="dialogStatus === 'edit'" label="设置对象权限" name="second">
           <el-select v-model="permTemp.model" clearable placeholder="请选择模型" @change="getObjects">
             <el-option v-for="item in contentType" :key="item.id" :label="modelMap[item.model]" :value="item.model" />
           </el-select>
-          <el-select v-model="permTemp.objects" value-key="id" clearable placeholder="请选择对象" multiple style="margin-left:20px;width:60%;" @change="getObjectPerms()">
+          <el-select v-model="selectedObjects" value-key="id" clearable placeholder="请选择对象" multiple style="margin-left:20px;width:60%;" @change="getObjectPerms()">
             <el-option v-for="item in objects" :key="item.id" :label="getOptionLabel(item)" :value="item" />
           </el-select>
-          <div v-for="item in permTemp.objects" :key="item.id" style="margin-top:20px;">
+          <div v-for="item in selectedObjectsWithPerms" :key="item.id" style="margin-top:20px;">
             <span>{{ getOptionLabel(item) }}</span>
-            <el-checkbox-group v-model="permTemp.permissions" style="margin-top:10px;margin-bottom:20px;">
+            <el-checkbox-group v-model="item.perms" style="margin-top:10px;margin-bottom:20px;">
               <el-checkbox v-for="perm in objectPermOptions " :key="perm.id" :label="perm.id">{{ permName(perm.codename) }}</el-checkbox>
             </el-checkbox-group>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane v-if="dialogStatus === 'edit'" label="查看对象权限" name="third">
+          <div v-for="item in checkedModels" :key="item.id">
+            <el-row>
+              <el-col :span="2">
+                <span>{{ modelMap[item.model] }}</span>
+              </el-col>
+              <el-col :span="22">
+                <div v-for="obj in item.group_objects" :key="obj.object">
+                  <span>{{ obj.object }}</span>
+                  <el-checkbox-group v-model="obj.perms" style="margin-top:10px;margin-bottom:20px;" disabled>
+                    <el-checkbox v-for="perm in getObjectPermOptions(item.model)" :key="perm.id" :label="perm.id">{{ permName(perm.codename) }}</el-checkbox>
+                  </el-checkbox-group>
+                </div>
+              </el-col>
+            </el-row>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -72,7 +89,7 @@
 </template>
 <script>
 import Pagination from '@/components/Pagination'
-import { getContentType, getGroup, addGroup, updateGroup, deleteGroup, getUserObjectPerms } from '@/api/user'
+import { getContentType, getGroup, addGroup, updateGroup, deleteGroup, getGroupObjectPerms, setGroupObjectPerms, getGroupPerms } from '@/api/user'
 import { getHosts } from '@/api/resource'
 
 export default {
@@ -111,11 +128,14 @@ export default {
       },
       permTemp: {
         model: '',
-        objects: null,
+        selectedObjectsId: [],
         permissions: []
       },
       objects: [],
-      objectPermOptions: []
+      selectedObjects: [],
+      selectedObjectsWithPerms: [],
+      objectPermOptions: [],
+      checkedModels: []
     }
   },
   created() {
@@ -128,9 +148,16 @@ export default {
       this.dialogStatus = 'create'
     },
     handleUpdate(row) {
+      this.permTemp.model = null
+      this.selectedObjects = []
+      this.selectedObjectsWithPerms = []
+      this.activeName = 'first'
       this.temp = Object.assign({}, row)
       this.dialogVisible = true
       this.dialogStatus = 'edit'
+      getGroupPerms({ groupname: this.temp.name }).then(response => {
+        this.checkedModels = response
+      })
     },
     getList() {
       getGroup(this.listQuery).then(response => {
@@ -150,6 +177,7 @@ export default {
       addGroup(this.temp).then(() => {
         this.dialogVisible = false
         this.getList()
+        this.setObjectPerms()
         this.$notify({
           title: '成功',
           message: '用户组新增成功！',
@@ -162,6 +190,7 @@ export default {
       updateGroup(this.temp).then(() => {
         this.getList()
         this.dialogVisible = false
+        this.setObjectPerms()
         this.$notify({
           title: '成功',
           message: '更新成功',
@@ -194,8 +223,13 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        name: null
+        name: null,
+        permissions: []
       }
+      this.permTemp.model = null
+      this.selectedObjects = []
+      this.selectedObjectsWithPerms = []
+      this.activeName = 'first'
     },
     permName(codename) {
       var permType = codename.split('_')[0]
@@ -226,11 +260,21 @@ export default {
       }
     },
     getObjectPerms() {
-      if (this.permTemp.objects.length > 0) {
-        getUserObjectPerms(this.permTemp).then(response => {
-          console.log(response)
+      var data = { groupname: this.temp.name, model: this.permTemp.model, objects: this.selectedObjects }
+      if (this.dialogStatus === 'edit') {
+        getGroupObjectPerms(data).then(response => {
+          this.selectedObjectsWithPerms = response
         })
       }
+    },
+    setObjectPerms() {
+      if (this.permTemp.model) {
+        var data = { groupname: this.temp.name, model: this.permTemp.model, objects: this.selectedObjectsWithPerms }
+        setGroupObjectPerms(data)
+      }
+    },
+    getObjectPermOptions(model) {
+      return this.contentType.filter(ct => { return ct.model === model })[0].permission.filter(c => { return c.codename !== 'add_' + model })
     }
   }
 }
