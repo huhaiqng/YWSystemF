@@ -1,54 +1,54 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
-        <div class="card-panel-icon-wrapper icon-people">
+      <div class="card-panel" @click="toUrl('/resource/project')">
+        <div class="card-panel-icon-wrapper icon-shopping">
           <svg-icon icon-class="chart" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
             项目
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="project_count" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('messages')">
-        <div class="card-panel-icon-wrapper icon-message">
+      <div class="card-panel" @click="toUrl('/resource/host/')">
+        <div class="card-panel-icon-wrapper icon-shopping">
           <svg-icon icon-class="chart" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
             主机
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="host_count" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
-        <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="chart" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            发布次数
-          </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shoppings')">
+      <div class="card-panel" @click="toUrl('/resource/javaPackage')">
         <div class="card-panel-icon-wrapper icon-shopping">
           <svg-icon icon-class="chart" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            问题
+            JAR 包
           </div>
-          <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="java_package_count" :duration="3200" class="card-panel-num" />
+        </div>
+      </div>
+    </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="toUrl('/resource/mysqldb')">
+        <div class="card-panel-icon-wrapper icon-shopping">
+          <svg-icon icon-class="chart" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            MySQL DB
+          </div>
+          <count-to :start-val="0" :end-val="mysqldb_count" :duration="3600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -57,14 +57,31 @@
 
 <script>
 import CountTo from 'vue-count-to'
+import { getDashboardData } from '@/api/dashboard'
 
 export default {
   components: {
     CountTo
   },
+  data() {
+    return {
+      project_count: 100,
+      host_count: 10000,
+      mysqldb_count: 50,
+      java_package_count: 500
+    }
+  },
+  mounted() {
+    getDashboardData().then(response => {
+      this.project_count = response.project_count
+      this.host_count = response.host_count
+      this.java_package_count = response.java_package_count
+      this.mysqldb_count = response.mysqldb_count
+    })
+  },
   methods: {
-    handleSetLineChartData(type) {
-      this.$emit('handleSetLineChartData', type)
+    toUrl(url) {
+      this.$router.push(url)
     }
   }
 }

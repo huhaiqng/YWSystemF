@@ -16,9 +16,24 @@
           <span class="link-type" @click="handleHostInfo(row.host)">{{ row.host.ip }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="节点类型" align="center">
+      <el-table-column label="实例类别" align="center">
         <template slot-scope="{row}">
           <span>{{ row.type }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="分片" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.shard }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="角色" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.role }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="端口号" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.port }}</span>
         </template>
       </el-table-column>
       <el-table-column label="环境" align="center">
@@ -50,12 +65,24 @@
             <el-option v-for="item in hostList" :key="item.id" :label="item.ip" :value="item.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="节点类型" prop="type">
+        <el-form-item label="类别" prop="type">
           <el-select v-model="temp.type" style="width:60%">
-            <el-option value="单实例节点">单实例节点</el-option>
-            <el-option value="RAC 节点">RAC 节点</el-option>
-            <el-option value="StandBy 节点">StandBy 节点</el-option>
+            <el-option value="mongos">mongos</el-option>
+            <el-option value="monogd">mongod</el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="分片名" prop="shard">
+          <el-input v-model="temp.shard" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="角色" prop="role">
+          <el-select v-model="temp.role" style="width:60%">
+            <el-option value="primary">primary</el-option>
+            <el-option value="secondary">secondary</el-option>
+            <el-option value="arbiter">arbiter</el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="端口号" prop="port">
+          <el-input v-model="temp.port" style="width:60%" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -69,7 +96,7 @@
   </div>
 </template>
 <script>
-import { getHosts, getProjectOracle, addProjectOracle, updateProjectOracle, deleteProjectOracle } from '@/api/resource'
+import { getHosts, getProjectMongoDB, addProjectMongoDB, updateProjectMongoDB, deleteProjectMongoDB } from '@/api/resource'
 import { decodeStr } from '@/utils/base64'
 import HostDrawerContent from '@/components/Drawer/HostDrawerContent'
 export default {
@@ -89,7 +116,10 @@ export default {
         env: this.env,
         project: this.project.id,
         host: null,
-        type: '',
+        type: null,
+        shard: '',
+        role: '',
+        port: 27017,
         created: new Date()
       },
       hostTemp: {
@@ -102,7 +132,7 @@ export default {
         position: '阿里云',
         admin: 'root',
         password: '',
-        type: 'oracle',
+        type: 'mongodb',
         env: '测试环境',
         ins_num: 0,
         status: true,
@@ -131,7 +161,7 @@ export default {
   },
   methods: {
     getList() {
-      getProjectOracle(this.queryList).then(response => {
+      getProjectMongoDB(this.queryList).then(response => {
         this.list = response
       })
     },
@@ -140,7 +170,10 @@ export default {
         env: this.env,
         project: this.project.id,
         host: null,
-        type: '',
+        type: null,
+        shard: '',
+        role: '',
+        port: 27017,
         created: new Date()
       }
     },
@@ -153,7 +186,7 @@ export default {
       })
     },
     createData() {
-      addProjectOracle(this.temp).then(() => {
+      addProjectMongoDB(this.temp).then(() => {
         this.$notify({
           title: '成功',
           message: '新增成功！',
@@ -174,7 +207,7 @@ export default {
       })
     },
     updateData() {
-      updateProjectOracle(this.temp).then(() => {
+      updateProjectMongoDB(this.temp).then(() => {
         this.getList()
         this.dialogVisible = false
         this.$notify({
@@ -196,7 +229,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteProjectOracle(id).then(() => {
+        deleteProjectMongoDB(id).then(() => {
           this.$notify({
             title: '成功',
             message: '删除成功！',
@@ -215,4 +248,3 @@ export default {
   }
 }
 </script>
-

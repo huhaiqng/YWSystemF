@@ -249,3 +249,68 @@ export function deleteProjectGeneralSoftware(id) {
     method: 'delete'
   })
 }
+
+// ProjectMongoDB API
+export function getProjectMongoDB(data) {
+  return request({
+    url: '/api/getProjectMongoDB/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectMongoDB(data) {
+  return request({
+    url: '/api/projectMongoDB/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectMongoDB(data) {
+  return request({
+    url: `/api/projectMongoDB/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectMongoDB(id) {
+  return request({
+    url: `/api/projectMongoDB/${id}`,
+    method: 'delete'
+  })
+}
+
+// ProjectOracle API
+export function getProjectOracle(data) {
+  return request({
+    url: '/api/getProjectOracle/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectOracle(data) {
+  return request({
+    url: '/api/projectOracle/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectOracle(data) {
+  return request({
+    url: `/api/projectOracle/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectOracle(id) {
+  return request({
+    url: `/api/projectOracle/${id}`,
+    method: 'delete'
+  })
+}
+
