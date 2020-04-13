@@ -25,7 +25,7 @@
       </el-table-column>
       <el-table-column label="项目" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.project }}</span>
+          <span>{{ row.project.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="端口号" align="center">
@@ -169,10 +169,9 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row)
+      this.temp.project = this.temp.project.id
       this.dialogStatus = 'edit'
       this.dialogVisible = true
-      var pjs = this.projectList.filter(item => item.name === row.project)
-      this.temp.project = pjs[0].id
     },
     handleDelete(id) {
       this.$confirm('确认删除', '提示', {

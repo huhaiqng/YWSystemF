@@ -45,7 +45,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane v-if="dialogStatus === 'edit'" label="设置对象权限" name="second">
-          <el-select v-model="permTemp.model" clearable placeholder="请选择模型" @change="getObjects">
+          <el-select v-model="permTemp.model" placeholder="请选择模型" @change="getObjects">
             <el-option v-for="item in contentType" :key="item.id" :label="modelMap[item.model]" :value="item.model" />
           </el-select>
           <el-select v-model="selectedObjects" value-key="id" clearable placeholder="请选择对象" multiple style="margin-left:20px;width:60%;" @change="getObjectPerms()">
@@ -90,7 +90,8 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { getContentType, getGroup, addGroup, updateGroup, deleteGroup, getGroupObjectPerms, setGroupObjectPerms, getGroupPerms } from '@/api/user'
-import { getHosts } from '@/api/resource'
+import { getHosts, getJavaPackageList, getMySQLDB, getProjects } from '@/api/resource'
+import { getTask } from '@/api/task'
 
 export default {
   name: 'Group',
@@ -246,17 +247,45 @@ export default {
       }
     },
     getObjects() {
+      var params = null
+      this.selectedObjects = []
+      this.selectedObjectsWithPerms = []
       if (this.permTemp.model === 'host') {
-        var params = { ip: '', type: '', env: '', limit: 10000 }
+        params = { ip: '', type: '', env: '', limit: 10000 }
         getHosts(params).then(response => {
           this.objects = response
         })
-        this.objectPermOptions = this.contentType.filter(ct => { return ct.model === 'host' })[0].permission.filter(c => { return c.codename !== 'add_host' })
       }
+      if (this.permTemp.model === 'javapackage') {
+        params = { name: '', project: '', page: 0, limit: 10000 }
+        getJavaPackageList(params).then(response => {
+          this.objects = response
+        })
+      }
+      if (this.permTemp.model === 'task') {
+        params = { name: '', type: '', page: 0, limit: 10000 }
+        getTask(params).then(response => {
+          this.objects = response
+        })
+      }
+      if (this.permTemp.model === 'project') {
+        getProjects().then(response => {
+          this.objects = response
+        })
+      }
+      if (this.permTemp.model === 'mysqldb') {
+        params = { name: '', project: '', page: 0, limit: 10000 }
+        getMySQLDB(params).then(response => {
+          this.objects = response
+        })
+      }
+      this.objectPermOptions = this.contentType.filter(ct => { return ct.model === this.permTemp.model })[0].permission.filter(c => { return c.codename !== 'add_' + this.permTemp.model })
     },
     getOptionLabel(item) {
       if (this.permTemp.model === 'host') {
         return item.ip
+      } else {
+        return item.name
       }
     },
     getObjectPerms() {
