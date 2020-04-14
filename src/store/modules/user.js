@@ -1,31 +1,36 @@
-import { login } from '@/api/user'
+import { login, getUserInfo } from '@/api/user'
 import { getToken, setToken, setUserName, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
-import userlogo from '@/images/userlogo.jpg'
+// import userlogo from '@/images/userlogo.jpg'
 
 const state = {
   token: getToken(),
-  name: '',
-  avatar: '',
-  introduction: '',
-  roles: []
+  id: null,
+  // name: '',
+  // avatar: '',
+  // introduction: '',
+  // roles: []
+  userInfo: null
 }
 
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
-  SET_INTRODUCTION: (state, introduction) => {
-    state.introduction = introduction
-  },
-  SET_NAME: (state, name) => {
-    state.name = name
-  },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
-  },
-  SET_ROLES: (state, roles) => {
-    state.roles = roles
+  // SET_INTRODUCTION: (state, introduction) => {
+  //   state.introduction = introduction
+  // },
+  // SET_NAME: (state, name) => {
+  //   state.name = name
+  // },
+  // SET_AVATAR: (state, avatar) => {
+  //   state.avatar = avatar
+  // },
+  // SET_ROLES: (state, roles) => {
+  //   state.roles = roles
+  // }
+  SET_USERINFO: (state, userInfo) => {
+    state.userInfo = userInfo
   }
 }
 
@@ -48,29 +53,14 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      const data = {
-        roles: ['admin'],
-        introduction: 'I am a super administrator',
-        avatar: userlogo,
-        name: 'Super Admin'
-      }
-
-      if (!data) {
-        reject('Verification failed, please Login again.')
-      }
-
-      const { roles, name, avatar, introduction } = data
-
-      // roles must be a non-empty array
-      if (!roles || roles.length <= 0) {
-        reject('getInfo: roles must be a non-null array!')
-      }
-
-      commit('SET_ROLES', roles)
-      commit('SET_NAME', name)
-      commit('SET_AVATAR', avatar)
-      commit('SET_INTRODUCTION', introduction)
-      resolve(data)
+      getUserInfo().then(response => {
+        const userInfo = response
+        if (!userInfo) {
+          reject('无法获取用户信息！')
+        }
+        commit('SET_USERINFO', userInfo)
+        resolve(userInfo)
+      })
     })
   },
 
@@ -78,12 +68,10 @@ const actions = {
   logout({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
       commit('SET_TOKEN', '')
-      commit('SET_ROLES', [])
+      commit('SET_USERINFO', null)
       removeToken()
       resetRouter()
-
       dispatch('tagsView/delAllViews', null, { root: true })
-
       resolve()
     })
   },
@@ -92,7 +80,7 @@ const actions = {
   resetToken({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
-      commit('SET_ROLES', [])
+      commit('SET_USERINFO', null)
       removeToken()
       resolve()
     })

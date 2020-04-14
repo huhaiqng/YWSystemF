@@ -16,11 +16,10 @@ export function login(data) {
   })
 }
 
-export function getInfo(token) {
+export function getUserInfo() {
   return request({
-    url: '/vue-element-admin/user/info',
-    method: 'get',
-    params: { token }
+    url: '/api/getUserInfo/',
+    method: 'get'
   })
 }
 
