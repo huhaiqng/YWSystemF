@@ -8,13 +8,9 @@
         <img class="pic-404__child right" src="@/assets/404_images/404_cloud.png" alt="404">
       </div>
       <div class="bullshit">
-        <div class="bullshit__oops">OOPS!</div>
-        <div class="bullshit__info">All rights reserved
-          <a style="color:#20a0ff" href="https://wallstreetcn.com" target="_blank">wallstreetcn</a>
-        </div>
-        <div class="bullshit__headline">{{ message }}</div>
-        <div class="bullshit__info">Please check that the URL you entered is correct, or click the button below to return to the homepage.</div>
-        <a href="" class="bullshit__return-home">Back to home</a>
+        <div class="bullshit__oops">404 页面不存在！</div>
+        <el-button type="primary" round @click="home">首页</el-button>
+        <el-button type="primary" round @click="back">返回</el-button>
       </div>
     </div>
   </div>
@@ -28,6 +24,18 @@ export default {
     message() {
       return 'The webmaster said that you can not enter this page...'
     }
+  },
+  methods: {
+    back() {
+      if (this.$route.query.noGoBack) {
+        this.$router.push({ path: '/dashboard' })
+      } else {
+        this.$router.go(-1)
+      }
+    },
+    home() {
+      this.$router.push({ path: '/dashboard' })
+    }
   }
 }
 </script>
@@ -38,6 +46,11 @@ export default {
   position: absolute;
   top: 40%;
   left: 50%;
+}
+.pan-back-btn {
+  background: #008489;
+  color: #fff;
+  border: none!important;
 }
 .wscn-http404 {
   position: relative;

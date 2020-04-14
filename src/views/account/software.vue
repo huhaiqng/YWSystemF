@@ -16,6 +16,11 @@
           <span class="link-type" @click="showDetail(row)">{{ row.username }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="地址" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.addr }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="用途" align="center">
         <template slot-scope="{row}">
           <span>{{ row.use }}</span>
@@ -37,16 +42,19 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
       <el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style="margin-left:30px;margin-right:30px">
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="temp.username" style="width:60%" placeholder="用户名" />
+          <el-input v-model="temp.username" style="width:60%" />
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input ref="password" v-model="temp.password" style="width:60%" :type="passwordType" placeholder="密码" />
+          <el-input ref="password" v-model="temp.password" style="width:60%" :type="passwordType" />
           <span class="show-pwd" @click="showPwd">
             <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
           </span>
         </el-form-item>
+        <el-form-item label="地址" prop="username">
+          <el-input v-model="temp.addr" style="width:60%" />
+        </el-form-item>
         <el-form-item label="用途" prop="use">
-          <el-input v-model="temp.use" style="width:100%" placeholder="用途" />
+          <el-input v-model="temp.use" style="width:100%" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -106,6 +114,7 @@ export default {
       temp: {
         username: null,
         password: null,
+        addr: null,
         use: null,
         created: new Date()
       },
@@ -212,6 +221,7 @@ export default {
       this.temp = {
         username: null,
         password: null,
+        addr: null,
         use: null,
         created: new Date()
       }

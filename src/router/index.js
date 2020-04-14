@@ -163,15 +163,7 @@ export const asyncRoutes = [
         component: () => import('@/views/account/software'),
         name: 'Software',
         meta: {
-          title: '系统账号'
-        }
-      },
-      {
-        path: 'websystem',
-        component: () => import('@/views/account/websystem'),
-        name: 'WebSystem',
-        meta: {
-          title: 'Web 账号'
+          title: '账号管理'
         }
       }
     ]
