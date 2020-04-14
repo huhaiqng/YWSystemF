@@ -36,6 +36,7 @@
           <el-dropdown type="primary">
             <el-button size="mini" split-buttion type="primary">操作<i class="el-icon-arrow-down el-icon--right" /></el-button>
             <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="handleSSHConnectHost(row.host)">SSH</el-dropdown-item>
               <el-dropdown-item @click.native="handleUpdate(row)">编辑</el-dropdown-item>
               <el-dropdown-item @click.native="handleDelete(row.id)">删除</el-dropdown-item>
             </el-dropdown-menu>
@@ -72,6 +73,7 @@
 import { getHosts, getProjectOracle, addProjectOracle, updateProjectOracle, deleteProjectOracle } from '@/api/resource'
 import { decodeStr } from '@/utils/base64'
 import HostDrawerContent from '@/components/Drawer/HostDrawerContent'
+import { sshConnectHost } from '@/utils/webssh'
 export default {
   components: { HostDrawerContent },
   props: {
@@ -211,6 +213,9 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    handleSSHConnectHost(row) {
+      sshConnectHost(row)
     }
   }
 }

@@ -52,6 +52,7 @@
               <el-dropdown type="primary">
                 <el-button size="mini" split-buttion type="primary">操作<i class="el-icon-arrow-down el-icon--right" /></el-button>
                 <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="handleSSHConnectHost(row.host)">SSH</el-dropdown-item>
                   <el-dropdown-item @click.native="handleUpdate(row)">编辑</el-dropdown-item>
                   <el-dropdown-item @click.native="handleDelete(row.id, $index)">删除</el-dropdown-item>
                 </el-dropdown-menu>
@@ -109,6 +110,7 @@ import { getHosts, getMySQLDB, addProjectMySQLDB, updateProjectMySQLDB, deletePr
 import { decodeStr } from '@/utils/base64'
 import HostDrawerContent from '@/components/Drawer/HostDrawerContent'
 import Mysqldb from '@/components/Drawer/mysqldb'
+import { sshConnectHost } from '@/utils/webssh'
 export default {
   components: { HostDrawerContent, Mysqldb },
   props: {
@@ -269,6 +271,9 @@ export default {
       this.mysqldb.pro_password = decodeStr(this.mysqldb.pro_password)
       this.mysqldb.test_password = decodeStr(this.mysqldb.test_password)
       this.mysqldbDrawerVisible = true
+    },
+    handleSSHConnectHost(row) {
+      sshConnectHost(row)
     }
   }
 }

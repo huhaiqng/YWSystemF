@@ -42,8 +42,9 @@
           <span>{{ row.created | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="80px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="160px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
+          <el-button size="mini" type="primary" @click.native="handleSSHConnectHost(row.host)">SSH</el-button>
           <el-button size="mini" type="danger" @click.native="handleDelete(row.id)">删除</el-button>
         </template>
       </el-table-column>
@@ -70,6 +71,7 @@
 import { getHosts, getProjectGeneralSoftware, addProjectGeneralSoftware, deleteProjectGeneralSoftware } from '@/api/resource'
 import { decodeStr } from '@/utils/base64'
 import HostDrawerContent from '@/components/Drawer/HostDrawerContent'
+import { sshConnectHost } from '@/utils/webssh'
 export default {
   components: { HostDrawerContent },
   props: {
@@ -183,6 +185,9 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    handleSSHConnectHost(row) {
+      sshConnectHost(row)
     }
   }
 }

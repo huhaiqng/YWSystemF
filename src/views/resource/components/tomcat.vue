@@ -46,20 +46,15 @@
           <span>{{ row.host.env }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center">
-        <template slot-scope="{row}">
-          <span v-if="row.host.status">正常</span>
-          <span v-else>故障</span>
-        </template>
-      </el-table-column>
       <el-table-column label="创建时间" align="center">
         <template slot-scope="{row}">
           <span>{{ row.created | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="80px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="160px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button size="mini" type="danger" @click.native="handleDelete(row.id)">删除</el-button>
+          <el-button size="mini" type="primary" @click="handleSSHConnectHost(row.host)">SSH</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -85,6 +80,7 @@
 import { getHosts, getProjectTomcat, addProjectTomcat, deleteProjectTomcat } from '@/api/resource'
 import { decodeStr } from '@/utils/base64'
 import HostDrawerContent from '@/components/Drawer/HostDrawerContent'
+import { sshConnectHost } from '@/utils/webssh'
 export default {
   components: { HostDrawerContent },
   props: {
@@ -200,6 +196,9 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+    handleSSHConnectHost(row) {
+      sshConnectHost(row)
     }
   }
 }
