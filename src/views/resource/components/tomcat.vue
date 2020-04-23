@@ -1,5 +1,28 @@
 <template>
   <div class="app-container">
+    <el-dialog title="新增" :visible.sync="dialogVisible">
+      <el-form ref="formData" :model="temp" label-position="left" label-width="100px" style="margin-left:30px;margin-right:30px">
+        <el-form-item label="服务器" prop="host">
+          <el-select v-model="temp.host" multiple placeholder="选择服务器" style="width:60%">
+            <el-option v-for="item in hostList" :key="item.id" :label="item.ip" :value="item.id" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="createData()">保存</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="结果" :visible.sync="resultDialogVisible" width="80%">
+      <div class="exec-result">
+        <el-scrollbar>
+          <pre id="result" />
+        </el-scrollbar>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button :loading="btnDisabled" @click="resultDialogVisible = false">关闭</el-button>
+      </span>
+    </el-dialog>
     <div class="filter-container">
       <el-breadcrumb separator-class="el-icon-arrow-right" style="padding-bottom: 20px">
         <el-breadcrumb-item>{{ env }}</el-breadcrumb-item>
@@ -10,16 +33,16 @@
       <el-button type="primary" icon="el-icon-edit" @click="handleCreate()">
         添加
       </el-button>
-      <el-button type="success" plain>启动</el-button>
-      <el-button type="success" plain>停止</el-button>
-      <el-button type="success" plain>重启</el-button>
-      <el-button type="success" plain>检查</el-button>
+      <el-button type="success" :disabled="btnDisabled" plain @click="handleJarControl('start')">启动</el-button>
+      <el-button type="success" :disabled="btnDisabled" plain @click="handleJarControl('stop')">停止</el-button>
+      <el-button type="success" :disabled="btnDisabled" plain @click="handleJarControl('restart')">重启</el-button>
+      <el-button type="success" :disabled="btnDisabled" plain @click="handleJarControl('check')">检查</el-button>
       <el-select v-model="packageFile" placeholder="选择包" style="margin-left:10px">
         <el-option value="a.jar.01" label="a.jar.01">a.jar.01</el-option>
       </el-select>
-      <el-button type="success" plain>发布</el-button>
+      <el-button type="success" :disabled="btnDisabled" plain @click="handleJarControl('deploy')">发布</el-button>
     </div>
-    <el-table :key="tableKey" :data="list" border fit highlight-current-row>
+    <el-table :key="tableKey" :data="list" border fit highlight-current-row @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="40" align="center" />
       <el-table-column label="包名" align="center">
         <template>
@@ -58,19 +81,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-dialog title="新增" :visible.sync="dialogVisible">
-      <el-form ref="formData" :model="temp" label-position="left" label-width="100px" style="margin-left:30px;margin-right:30px">
-        <el-form-item label="服务器" prop="host">
-          <el-select v-model="temp.host" multiple placeholder="选择服务器" style="width:60%">
-            <el-option v-for="item in hostList" :key="item.id" :label="item.ip" :value="item.id" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="createData()">保存</el-button>
-      </div>
-    </el-dialog>
     <el-drawer title="详情" :visible.sync="hostDrawerVisible" :with-header="false">
       <host-drawer-content :host="hostTemp" />
     </el-drawer>
@@ -81,6 +91,7 @@ import { getHosts, getProjectTomcat, addProjectTomcat, deleteProjectTomcat } fro
 import { decodeStr } from '@/utils/base64'
 import HostDrawerContent from '@/components/Drawer/HostDrawerContent'
 import { sshConnectHost } from '@/utils/webssh'
+import { controlJar } from '@/api/websocket'
 export default {
   components: { HostDrawerContent },
   props: {
@@ -130,7 +141,10 @@ export default {
         type: this.software,
         env: this.env,
         limit: 10000
-      }
+      },
+      selectedHosts: [],
+      btnDisabled: false,
+      resultDialogVisible: false
     }
   },
   created() {
@@ -199,7 +213,44 @@ export default {
     },
     handleSSHConnectHost(row) {
       sshConnectHost(row)
+    },
+    handleJarControl(cmd) {
+      this.btnDisabled = true
+      this.resultDialogVisible = true
+      var promise = new Promise((resolve, reject) => {
+        controlJar(this.jar, this.selectedHosts, cmd, resolve)
+      })
+      promise.then(() => {
+        this.btnDisabled = false
+        this.resultDialogVisible = false
+      })
+      var data = { 'java_package': this.jar, 'hosts': this.selectedHosts, 'cmd': cmd }
+      this.btnDisabled = true
+      this.resultDialogVisible = true
+      console.log(data)
+    },
+    handleSelectionChange(val) {
+      this.selectedHosts = val.map(pt => pt.host)
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+pre {
+  color: white;
+  padding-left: 19px;
+  font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+}
+.exec-result{
+  flex: 1;
+  background-color: black;
+  border-radius: 4px;
+  /deep/.el-scrollbar{
+    height: calc(100vh - 300px);
+    .el-scrollbar__wrap{
+      overflow-x: hidden;
+    }
+  }
+}
+</style>

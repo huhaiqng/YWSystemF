@@ -21,3 +21,26 @@ export function handleExecTask(task, hosts, resolve) {
     }
   }
 }
+
+export function controlJar(jar, hosts, cmd, resolve) {
+  console.log(document.getElementById('controlJarResult'))
+  document.getElementById('controlJarResult').innerHTML = ''
+  var websock = new WebSocket('ws://' + window.location.host + '/api/controlJar/')
+  var sendHosts = []
+  for (var i = 0; i < hosts.length; i++) {
+    sendHosts[i] = Object.assign({}, hosts[i])
+    sendHosts[i].password = decodeStr(sendHosts[i].password)
+  }
+  websock.onopen = () => {
+    var toMessage = { 'jar': jar, 'hosts': sendHosts, 'cmd': cmd }
+    websock.send(JSON.stringify(toMessage))
+  }
+  websock.onmessage = (e) => {
+    if (e.data !== 'closed') {
+      document.getElementById('controlJarResult').append(e.data)
+    } else {
+      resolve()
+      websock.close(1000, 'closed by client')
+    }
+  }
+}
