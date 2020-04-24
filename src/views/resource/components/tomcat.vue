@@ -13,10 +13,10 @@
         <el-button type="primary" @click="createData()">保存</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="结果" :visible.sync="resultDialogVisible" width="80%">
+    <el-dialog :title="resultTitle" :visible.sync="resultDialogVisible" width="80%">
       <div class="exec-result">
         <el-scrollbar>
-          <pre id="result" />
+          <pre>{{ $store.state.websocket.controlJarResult }}</pre>
         </el-scrollbar>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -144,7 +144,15 @@ export default {
       },
       selectedHosts: [],
       btnDisabled: false,
-      resultDialogVisible: false
+      resultDialogVisible: false,
+      resultTitle: '',
+      titleMap: {
+        start: '启动 ' + this.jar,
+        stop: '停止 ' + this.jar,
+        check: '检查 ' + this.jar,
+        restart: '重启 ' + this.jar,
+        deploy: '发布 ' + this.jar
+      }
     }
   },
   created() {
@@ -215,19 +223,15 @@ export default {
       sshConnectHost(row)
     },
     handleJarControl(cmd) {
+      this.resultTitle = this.titleMap[cmd]
       this.btnDisabled = true
       this.resultDialogVisible = true
       var promise = new Promise((resolve, reject) => {
-        controlJar(this.jar, this.selectedHosts, cmd, resolve)
+        controlJar(this.jar, this.selectedHosts, cmd, this.$store, resolve)
       })
       promise.then(() => {
         this.btnDisabled = false
-        this.resultDialogVisible = false
       })
-      var data = { 'java_package': this.jar, 'hosts': this.selectedHosts, 'cmd': cmd }
-      this.btnDisabled = true
-      this.resultDialogVisible = true
-      console.log(data)
     },
     handleSelectionChange(val) {
       this.selectedHosts = val.map(pt => pt.host)
@@ -239,7 +243,7 @@ export default {
 <style lang="scss" scoped>
 pre {
   color: white;
-  padding-left: 19px;
+  padding-left: 15px;
   font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
 .exec-result{

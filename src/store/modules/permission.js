@@ -53,7 +53,6 @@ const actions = {
       if (is_superuser) {
         accessedRoutes = asyncRoutes || []
       }
-      accessedRoutes.push({ path: '*', redirect: '/404', hidden: true })
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
     })
