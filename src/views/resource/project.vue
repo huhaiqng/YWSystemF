@@ -71,18 +71,12 @@ export default {
           for (var x = 0; x < software.length; x++) {
             if (software[x].name === 'tomcat') {
               for (var j = 0; j < java_package.length; j++) {
-                // pro_java_children.push({ id: java_package[j].id, name: 'ppst', project: label, label: java_package[j].name })
-                // test_java_children.push({ id: java_package[j].id, name: 'tpst', project: label, label: java_package[j].name })
                 pro_java_children.push({ id: java_package[j].id, name: 'ppst', project: project, label: java_package[j].name })
                 test_java_children.push({ id: java_package[j].id, name: 'tpst', project: project, label: java_package[j].name })
               }
-              // pro_software_children.push({ id: software[x].id, name: 'pps', project: label, label: software[x].name, children: pro_java_children })
-              // test_software_children.push({ id: software[x].id, name: 'tps', project: label, label: software[x].name, children: test_java_children })
               pro_software_children.push({ id: software[x].id, name: 'pps', project: project, label: software[x].name, children: pro_java_children })
               test_software_children.push({ id: software[x].id, name: 'tps', project: project, label: software[x].name, children: test_java_children })
             } else {
-              // pro_software_children.push({ id: software[x].id, type: software[x].type, name: 'pps', project: label, label: software[x].name })
-              // test_software_children.push({ id: software[x].id, type: software[x].type, name: 'tps', project: label, label: software[x].name })
               pro_software_children.push({ id: software[x].id, type: software[x].type, name: 'pps', project: project, label: software[x].name })
               test_software_children.push({ id: software[x].id, type: software[x].type, name: 'tps', project: project, label: software[x].name })
             }
@@ -142,8 +136,6 @@ export default {
 .down-tree{
   flex: 1;
   border-right:1px solid rgba(211,219,222,1);
-  // min-width: 200px;
-  // max-width: 220px;
   background-color: #f0f2f5;
   /deep/.el-scrollbar{
     height: calc(100vh - 84px);
