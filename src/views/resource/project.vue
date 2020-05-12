@@ -33,6 +33,7 @@
 <script>
 import Vue from 'vue'
 import { getProjects } from '@/api/resource'
+// import abc from '@/views/resource/components/ProjectList'
 export default {
   name: 'TreeProject',
   data() {
@@ -118,14 +119,11 @@ export default {
       }
     },
     setComponentIs(software, type) {
-      var dir = ''
       if (type === 'special') {
-        dir = `./components/${software}`
-        Vue.component(software, () => import(dir))
+        Vue.component(software, res => require([`./components/${software}`], res))
         this.currentComponent = software
       } else if (type === 'general') {
-        dir = './components/general'
-        Vue.component(software, () => import(dir))
+        Vue.component(software, () => import('./components/general'))
         this.currentComponent = software
       }
     }
