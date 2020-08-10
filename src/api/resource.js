@@ -66,6 +66,13 @@ export function getSoftware() {
   })
 }
 
+export function getEnv() {
+  return request({
+    url: '/api/getEnv/',
+    method: 'get'
+  })
+}
+
 // ProjectWeb API
 export function getProjectWeb(data) {
   return request({

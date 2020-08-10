@@ -6,7 +6,7 @@
         <el-option v-for="item in typeOptions" :key="item.id" :label="item.name" :value="item.name" />
       </el-select>
       <el-select v-model="listQuery.env" placeholder="环境" clearable class="filter-item" style="width: 150px">
-        <el-option v-for="item in envOptions" :key="item" :label="item" :value="item" />
+        <el-option v-for="item in envOptions" :key="item.id" :label="item.name_cn" :value="item.name_cn" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
@@ -112,14 +112,14 @@
           <el-col :span="12">
             <el-form-item label="环境" prop="env">
               <el-select v-model="temp.env" class="filter-item" placeholder="选择环境">
-                <el-option v-for="item in envOptions" :key="item" :label="item" :value="item" />
+                <el-option v-for="item in envOptions" :key="item.id" :label="item.name_cn" :value="item.name_cn" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="系统版本" prop="version">
               <el-select v-model="temp.version" class="filter-item" placeholder="选择版本">
-                <el-option v-for="item in versionOptions" :key="item" :label="item" :value="item" />
+                <el-option v-for="item in versionOptions" :key="item.id" :label="item.name_cn" :value="item.name_cn" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -204,7 +204,7 @@
 </template>
 
 <script>
-import { getHosts, addHost, updateHost, deleteHost, getSoftware } from '@/api/resource'
+import { getHosts, addHost, updateHost, deleteHost, getEnv, getSoftware } from '@/api/resource'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -235,8 +235,8 @@ export default {
       diskOptions: ['40G', '80G', '12G'],
       positionOptions: ['阿里云', '电信机房', '公司机房'],
       adminOptions: ['root', 'administrator'],
-      typeOptions: '',
-      envOptions: ['开发环境', '测试环境', '生产环境'],
+      typeOptions: undefined,
+      envOptions: undefined,
       dialogUploadVisible: false,
       temp: {
         name: undefined,
@@ -248,8 +248,8 @@ export default {
         position: '阿里云',
         admin: 'root',
         password: '',
-        type: 'tomcat',
-        env: '测试环境',
+        type: undefined,
+        env: undefined,
         ins_num: 0,
         status: true,
         created: new Date()
@@ -273,6 +273,9 @@ export default {
     this.getList()
     getSoftware().then(response => {
       this.typeOptions = response
+    })
+    getEnv().then(response => {
+      this.envOptions = response
     })
   },
   methods: {
