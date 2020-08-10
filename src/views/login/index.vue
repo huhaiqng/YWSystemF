@@ -67,8 +67,8 @@ export default {
   data() {
     return {
       loginForm: {
-        username: 'admin',
-        password: 'django'
+        username: undefined,
+        password: undefined
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur' }],

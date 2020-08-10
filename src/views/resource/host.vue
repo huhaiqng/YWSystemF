@@ -236,7 +236,7 @@ export default {
       positionOptions: ['阿里云', '电信机房', '公司机房'],
       adminOptions: ['root', 'administrator'],
       typeOptions: '',
-      envOptions: ['测试环境', '生产环境'],
+      envOptions: ['开发环境', '测试环境', '生产环境'],
       dialogUploadVisible: false,
       temp: {
         name: undefined,

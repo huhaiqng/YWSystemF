@@ -14,6 +14,7 @@
           </div>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item @click.native="handleChangeMyPassword">更改密码</el-dropdown-item>
+            <el-dropdown-item @click.native="gotoAdmin">Django 管理</el-dropdown-item>
             <el-dropdown-item divided @click.native="logout">退出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -101,6 +102,9 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    gotoAdmin() {
+      window.open(process.env.VUE_APP_ADMIN_URL, '_blank')
     },
     handleChangeMyPassword() {
       this.dialogVisible = true

@@ -251,7 +251,7 @@ pre {
   background-color: black;
   border-radius: 4px;
   /deep/.el-scrollbar{
-    height: calc(100vh - 300px);
+    height: calc(100vh - 350px);
     .el-scrollbar__wrap{
       overflow-x: hidden;
     }

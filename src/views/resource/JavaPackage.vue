@@ -82,7 +82,7 @@
         <el-form-item label="部署路径" prop="deploy_dir">
           <el-input v-model="temp.deploy_dir" style="width:60%" />
         </el-form-item>
-        <el-form-item label="选择地址" prop="download_addr">
+        <el-form-item label="获取地址" prop="download_addr">
           <el-input v-model="temp.download_addr" style="width:60%" />
         </el-form-item>
         <el-form-item label="功能" prop="func">
