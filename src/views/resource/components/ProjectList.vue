@@ -26,6 +26,11 @@
           <span v-for="(item, index) in row.software" :key="item.id">{{ index===0?item.name:", " + item.name }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="环境" align="center">
+        <template slot-scope="{row}">
+          <span v-for="(item, index) in row.env" :key="item.id">{{ index===0?item.name_cn:", " + item.name_cn }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="80px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-dropdown type="primary">
@@ -48,6 +53,11 @@
             <el-option v-for="item in softwareList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
+        <el-form-item label="环境" prop="env">
+          <el-select v-model="temp.env" class="filter-item" multiple style="width:60%">
+            <el-option v-for="item in envlist" :key="item.id" :label="item.name_cn" :value="item.id" />
+          </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">
@@ -66,7 +76,8 @@ import { getSoftware, addProjects, deleteProjects, updateProjects } from '@/api/
 export default {
   name: 'ProjectList',
   props: {
-    projects: { type: Array, default: null }
+    projects: { type: Array, default: null },
+    envlist: { type: Array, default: null }
   },
   data() {
     return {
@@ -74,7 +85,8 @@ export default {
       softwareList: null,
       temp: {
         name: '',
-        software: null
+        software: undefined,
+        env: undefined
       },
       dialogStatus: 'create',
       dialogVisible: false,
@@ -88,7 +100,8 @@ export default {
     restTemp() {
       this.temp = {
         name: '',
-        software: null
+        software: undefined,
+        env: undefined
       }
     },
     handleCreate() {
@@ -104,6 +117,7 @@ export default {
       this.dialogStatus = 'edit'
       this.dialogVisible = true
       this.temp.software = row.software.map(s => { return s.id })
+      this.temp.env = row.env.map(e => { return e.id })
       getSoftware().then(response => {
         this.softwareList = response
       })
@@ -145,6 +159,7 @@ export default {
     updateData() {
       updateProjects(this.temp).then(() => {
         this.$emit('getList')
+        console.log(this.temp)
         this.dialogVisible = false
         this.$notify({
           title: '成功',

@@ -321,3 +321,34 @@ export function deleteProjectOracle(id) {
   })
 }
 
+// ProjectJar API
+export function getProjectJar(data) {
+  return request({
+    url: '/api/getProjectJar/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectJar(data) {
+  return request({
+    url: '/api/projectJar/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectJar(data) {
+  return request({
+    url: `/api/projectJar/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectJar(id) {
+  return request({
+    url: `/api/projectJar/${id}`,
+    method: 'delete'
+  })
+}

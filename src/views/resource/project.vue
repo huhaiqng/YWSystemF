@@ -23,6 +23,7 @@
           :software="software"
           :jar="jar"
           :projects="projects"
+          :envlist="envList"
           @getList="getList"
         />
       </el-col>
@@ -33,7 +34,6 @@
 <script>
 import Vue from 'vue'
 import { getProjects, getEnv } from '@/api/resource'
-// import abc from '@/views/resource/components/ProjectList'
 export default {
   name: 'TreeProject',
   data() {
@@ -66,10 +66,15 @@ export default {
           for (var i = 0; i < response.length; i++) {
             var software = response[i].software
             var software_list = []
+            var project_env = response[i].env
             for (var j = 0; j < software.length; j++) {
               software_list.push({ id: software[j].id, label: software[j].name, name: this.envList[n].name_cn, type: 'software', project: response[i], children: [] })
             }
-            project_list.push({ id: response[i].id, label: response[i].name, children: software_list })
+            for (var m = 0; m < project_env.length; m++) {
+              if (project_env[m].name_cn === this.envList[n].name_cn) {
+                project_list.push({ id: response[i].id, label: response[i].name, children: software_list })
+              }
+            }
           }
           this.treeData.push({ id: n, label: this.envList[n].name_cn, children: project_list })
         }
