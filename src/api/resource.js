@@ -352,3 +352,67 @@ export function deleteProjectJar(id) {
     method: 'delete'
   })
 }
+
+// ProjectWar API
+export function getProjectWar(data) {
+  return request({
+    url: '/api/getProjectWar/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectWar(data) {
+  return request({
+    url: '/api/projectWar/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectWar(data) {
+  return request({
+    url: `/api/projectWar/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectWar(id) {
+  return request({
+    url: `/api/projectWar/${id}`,
+    method: 'delete'
+  })
+}
+
+// ProjectRedis API
+export function getProjectRedis(data) {
+  return request({
+    url: '/api/projectRedis/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectRedis(data) {
+  return request({
+    url: '/api/projectRedis/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectRedis(data) {
+  return request({
+    url: `/api/projectRedis/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectRedis(id) {
+  return request({
+    url: `/api/projectRedis/${id}`,
+    method: 'delete'
+  })
+}

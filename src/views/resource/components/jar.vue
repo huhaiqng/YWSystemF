@@ -11,24 +11,14 @@
       </el-button>
     </div>
     <el-table :key="tableKey" :data="list" border fit highlight-current-row>
-      <el-table-column label="IP 地址" align="center">
+      <el-table-column label="名称" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleHostInfo(row.host)">{{ row.host.ip }}</span>
+          <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="实例类别" align="center">
+      <el-table-column label="路径" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.type }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="分片" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.shard }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="角色" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.role }}</span>
+          <span>{{ row.dir }}</span>
         </template>
       </el-table-column>
       <el-table-column label="端口号" align="center">
@@ -36,9 +26,14 @@
           <span>{{ row.port }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="环境" align="center">
+      <el-table-column label="服务器" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.host.env }}</span>
+          <div v-for="h in row.host" :key="h.id"><span class="link-type" @click="handleHostInfo(h)">{{ h.ip }}</span></div>
+        </template>
+      </el-table-column>
+      <el-table-column label="环境" align="center">
+        <template>
+          <span>{{ temp.env }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center">
@@ -51,7 +46,6 @@
           <el-dropdown type="primary">
             <el-button size="mini" split-buttion type="primary">操作<i class="el-icon-arrow-down el-icon--right" /></el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="handleSSHConnectHost(row.host)">SSH</el-dropdown-item>
               <el-dropdown-item @click.native="handleUpdate(row)">编辑</el-dropdown-item>
               <el-dropdown-item @click.native="handleDelete(row.id)">删除</el-dropdown-item>
             </el-dropdown-menu>
@@ -61,29 +55,19 @@
     </el-table>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
       <el-form ref="formData" :model="temp" label-position="left" label-width="100px" style="margin-left:30px;margin-right:30px">
-        <el-form-item label="服务器" prop="host">
-          <el-select v-model="temp.host" style="width:60%">
-            <el-option v-for="item in hostList" :key="item.id" :label="item.ip" :value="item.id" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="类别" prop="type">
-          <el-select v-model="temp.type" style="width:60%">
-            <el-option value="mongos">mongos</el-option>
-            <el-option value="monogd">mongod</el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="分片名" prop="shard">
-          <el-input v-model="temp.shard" style="width:60%" />
-        </el-form-item>
-        <el-form-item label="角色" prop="role">
-          <el-select v-model="temp.role" style="width:60%">
-            <el-option value="primary">primary</el-option>
-            <el-option value="secondary">secondary</el-option>
-            <el-option value="arbiter">arbiter</el-option>
-          </el-select>
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="temp.name" style="width:60%" />
         </el-form-item>
         <el-form-item label="端口号" prop="port">
           <el-input v-model="temp.port" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="路径" prop="dir">
+          <el-input v-model="temp.dir" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="服务器" prop="host">
+          <el-select v-model="temp.host" class="filter-item" multiple style="width:60%">
+            <el-option v-for="item in hostList" :key="item.id" :label="item.ip" :value="item.id" />
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -100,7 +84,6 @@
 import { getHosts, getProjectJar, addProjectJar, updateProjectJar, deleteProjectJar } from '@/api/resource'
 import { decodeStr } from '@/utils/base64'
 import HostDrawerContent from '@/components/Drawer/HostDrawerContent'
-import { sshConnectHost } from '@/utils/webssh'
 export default {
   components: { HostDrawerContent },
   props: {
@@ -168,13 +151,12 @@ export default {
     },
     resetTemp() {
       this.temp = {
+        name: undefined,
+        dir: '',
+        port: undefined,
         env: this.env,
         project: this.project.id,
         host: null,
-        type: null,
-        shard: '',
-        role: '',
-        port: 27017,
         created: new Date()
       }
     },
@@ -200,7 +182,7 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row)
-      this.temp.host = row.host.id
+      this.temp.host = row.host.map(h => { return h.id })
       this.dialogStatus = 'edit'
       this.dialogVisible = true
       getHosts(this.hostQuery).then(response => {
@@ -245,9 +227,6 @@ export default {
           message: '已取消删除'
         })
       })
-    },
-    handleSSHConnectHost(row) {
-      sshConnectHost(row)
     }
   }
 }
