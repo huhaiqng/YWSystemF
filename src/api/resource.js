@@ -202,6 +202,14 @@ export function deleteMySQLDB(id) {
 }
 
 // ProjectMySQLDB API
+export function getProjectMySQLDB(data) {
+  return request({
+    url: '/api/projectMysqldb/',
+    method: 'get',
+    params: data
+  })
+}
+
 export function addProjectMySQLDB(data) {
   return request({
     url: '/api/projectMysqldb/',
@@ -413,6 +421,70 @@ export function updateProjectRedis(data) {
 export function deleteProjectRedis(id) {
   return request({
     url: `/api/projectRedis/${id}`,
+    method: 'delete'
+  })
+}
+
+// ProjectDotnet API
+export function getProjectDotnet(data) {
+  return request({
+    url: '/api/getProjectDotnet/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectDotnet(data) {
+  return request({
+    url: '/api/projectDotnet/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectDotnet(data) {
+  return request({
+    url: `/api/projectDotnet/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectDotnet(id) {
+  return request({
+    url: `/api/projectDotnet/${id}`,
+    method: 'delete'
+  })
+}
+
+// ProjectPHP API
+export function getProjectPHP(data) {
+  return request({
+    url: '/api/getProjectPHP/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectPHP(data) {
+  return request({
+    url: '/api/projectPHP/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectPHP(data) {
+  return request({
+    url: `/api/projectPHP/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectPHP(id) {
+  return request({
+    url: `/api/projectPHP/${id}`,
     method: 'delete'
   })
 }

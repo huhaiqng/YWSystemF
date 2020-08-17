@@ -36,6 +36,11 @@
           <span>{{ temp.env }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="部署方式" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.method }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center">
         <template slot-scope="{row}">
           <span>{{ row.created | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
@@ -67,6 +72,13 @@
         <el-form-item label="服务器" prop="host">
           <el-select v-model="temp.host" class="filter-item" multiple style="width:60%">
             <el-option v-for="item in hostList" :key="item.id" :label="item.ip" :value="item.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="部署方式" prop="method">
+          <el-select v-model="temp.method" class="filter-item" style="width:60%">
+            <el-option value="normal">normal</el-option>
+            <el-option value="docker">docker</el-option>
+            <el-option value="docker-compose">docker-compose</el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -104,6 +116,7 @@ export default {
         env: this.env,
         project: this.project.id,
         host: null,
+        method: undefined,
         created: new Date()
       },
       hostTemp: {
@@ -157,6 +170,7 @@ export default {
         env: this.env,
         project: this.project.id,
         host: null,
+        method: undefined,
         created: new Date()
       }
     },

@@ -12,8 +12,22 @@
 
         <div class="drawer-item">
           <el-row>
-            <el-col :span="12">项目名：</el-col>
-            <el-col :span="12">{{ mysqldb.project.name }}</el-col>
+            <el-col :span="12">地址：</el-col>
+            <el-col :span="12">{{ mysqldb.addr }}</el-col>
+          </el-row>
+        </div>
+
+        <div class="drawer-item">
+          <el-row>
+            <el-col :span="12">端口号：</el-col>
+            <el-col :span="12">{{ mysqldb.port }}</el-col>
+          </el-row>
+        </div>
+
+        <div class="drawer-item">
+          <el-row>
+            <el-col :span="12">角色：</el-col>
+            <el-col :span="12">{{ mysqldb.role }}</el-col>
           </el-row>
         </div>
 
@@ -26,15 +40,15 @@
 
         <div class="drawer-item">
           <el-row>
-            <el-col :span="12">生产环境密码：</el-col>
-            <el-col :span="12">{{ mysqldb.pro_password }}</el-col>
+            <el-col :span="12">密码：</el-col>
+            <el-col :span="12">{{ mysqldb.password }}</el-col>
           </el-row>
         </div>
 
         <div class="drawer-item">
           <el-row>
-            <el-col :span="12">测试环境密码：</el-col>
-            <el-col :span="12">{{ mysqldb.test_password }}</el-col>
+            <el-col :span="12">来源：</el-col>
+            <el-col :span="12">{{ mysqldb.origin }}</el-col>
           </el-row>
         </div>
 
