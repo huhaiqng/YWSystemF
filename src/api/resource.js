@@ -488,3 +488,163 @@ export function deleteProjectPHP(id) {
     method: 'delete'
   })
 }
+
+// ProjectRabbitmq API
+export function getProjectRabbitmq(data) {
+  return request({
+    url: '/api/projectRabbitmq/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectRabbitmq(data) {
+  return request({
+    url: '/api/projectRabbitmq/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectRabbitmq(data) {
+  return request({
+    url: `/api/projectRabbitmq/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectRabbitmq(id) {
+  return request({
+    url: `/api/projectRabbitmq/${id}`,
+    method: 'delete'
+  })
+}
+
+// ProjectActivemq API
+export function getProjectActivemq(data) {
+  return request({
+    url: '/api/projectActivemq/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectActivemq(data) {
+  return request({
+    url: '/api/projectActivemq/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectActivemq(data) {
+  return request({
+    url: `/api/projectActivemq/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectActivemq(id) {
+  return request({
+    url: `/api/projectActivemq/${id}`,
+    method: 'delete'
+  })
+}
+
+// ProjectZookeeper API
+export function getProjectZookeeper(data) {
+  return request({
+    url: '/api/projectZookeeper/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectZookeeper(data) {
+  return request({
+    url: '/api/projectZookeeper/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectZookeeper(data) {
+  return request({
+    url: `/api/projectZookeeper/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectZookeeper(id) {
+  return request({
+    url: `/api/projectZookeeper/${id}`,
+    method: 'delete'
+  })
+}
+
+// ProjectKafka API
+export function getProjectKafka(data) {
+  return request({
+    url: '/api/projectKafka/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectKafka(data) {
+  return request({
+    url: '/api/projectKafka/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectKafka(data) {
+  return request({
+    url: `/api/projectKafka/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectKafka(id) {
+  return request({
+    url: `/api/projectKafka/${id}`,
+    method: 'delete'
+  })
+}
+
+// ProjectSQLServer API
+export function getProjectSQLServer(data) {
+  return request({
+    url: '/api/projectSQLServer/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectSQLServer(data) {
+  return request({
+    url: '/api/projectSQLServer/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectSQLServer(data) {
+  return request({
+    url: `/api/projectSQLServer/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectSQLServer(id) {
+  return request({
+    url: `/api/projectSQLServer/${id}`,
+    method: 'delete'
+  })
+}

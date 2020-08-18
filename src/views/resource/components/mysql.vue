@@ -31,7 +31,7 @@
           <span>{{ row.dir }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="role" align="center">
+      <el-table-column label="角色" align="center">
         <template slot-scope="{row}">
           <span>{{ row.role }}</span>
         </template>
@@ -220,8 +220,8 @@ export default {
         })
       })
     },
-    handleMySQLInfo(redis) {
-      this.temp = Object.assign({}, redis)
+    handleMySQLInfo(sqlserver) {
+      this.temp = Object.assign({}, sqlserver)
       this.mysqlDrawerVisible = true
     },
     handleDelete(id) {

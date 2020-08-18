@@ -67,18 +67,18 @@ export const constantRoutes = [
         name: 'Host',
         meta: { 'title': '主机' }
       },
-      {
-        path: 'javaPackage',
-        component: () => import('@/views/resource/JavaPackage'),
-        name: 'JavaPackage',
-        meta: { 'title': 'JAR 包' }
-      },
-      {
-        path: 'MySQLDB',
-        component: () => import('@/views/resource/MySQLDB'),
-        name: 'MySQLDB',
-        meta: { 'title': 'MySQL DB' }
-      },
+      // {
+      //   path: 'javaPackage',
+      //   component: () => import('@/views/resource/JavaPackage'),
+      //   name: 'JavaPackage',
+      //   meta: { 'title': 'JAR 包' }
+      // },
+      // {
+      //   path: 'MySQLDB',
+      //   component: () => import('@/views/resource/MySQLDB'),
+      //   name: 'MySQLDB',
+      //   meta: { 'title': 'MySQL DB' }
+      // },
       {
         path: 'project',
         component: () => import('@/views/resource/project'),

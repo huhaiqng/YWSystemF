@@ -13,7 +13,7 @@
     <el-table :key="tableKey" :data="list" border fit highlight-current-row>
       <el-table-column label="地址" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleRedisInfo(row)">{{ row.addr }}</span>
+          <span class="link-type" @click="handleRabbitmqInfo(row)">{{ row.addr }}</span>
         </template>
       </el-table-column>
       <el-table-column label="端口号" align="center">
@@ -24,11 +24,6 @@
       <el-table-column label="路径" align="center">
         <template slot-scope="{row}">
           <span>{{ row.dir }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="集群名" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.cluster }}</span>
         </template>
       </el-table-column>
       <el-table-column label="环境" align="center">
@@ -74,8 +69,8 @@
         <el-form-item label="路径" prop="dir">
           <el-input v-model="temp.dir" style="width:60%" />
         </el-form-item>
-        <el-form-item label="集群" prop="dir">
-          <el-input v-model="temp.cluster" style="width:60%" />
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="temp.username" style="width:60%" />
         </el-form-item>
         <el-form-item label="密码" prop="dir">
           <el-input v-model="temp.password" style="width:60%" />
@@ -100,16 +95,16 @@
         <el-button type="primary" @click="dialogStatus === 'create'?createData():updateData()">保存</el-button>
       </div>
     </el-dialog>
-    <el-drawer title="详情" :visible.sync="redisDrawerVisible" :with-header="false">
-      <redis-drawer-content :redis="temp" />
+    <el-drawer title="详情" :visible.sync="rabbitmqDrawerVisible" :with-header="false">
+      <rabbitmq-drawer-content :rabbitmq="temp" />
     </el-drawer>
   </div>
 </template>
 <script>
-import { getProjectRedis, addProjectRedis, updateProjectRedis, deleteProjectRedis } from '@/api/resource'
-import RedisDrawerContent from '@/components/Drawer/redis'
+import { getProjectRabbitmq, addProjectRabbitmq, updateProjectRabbitmq, deleteProjectRabbitmq } from '@/api/resource'
+import RabbitmqDrawerContent from '@/components/Drawer/rabbitmq'
 export default {
-  components: { RedisDrawerContent },
+  components: { RabbitmqDrawerContent },
   props: {
     env: { type: String, default: null },
     project: { type: Object, default: null },
@@ -121,12 +116,12 @@ export default {
       tableKey: 0,
       hostList: [],
       dialogVisible: false,
-      redisDrawerVisible: false,
+      rabbitmqDrawerVisible: false,
       temp: {
         addr: undefined,
         port: undefined,
         dir: undefined,
-        cluster: undefined,
+        username: undefined,
         password: undefined,
         env: this.env,
         project: this.project.id,
@@ -150,7 +145,7 @@ export default {
   },
   methods: {
     getList() {
-      getProjectRedis(this.queryList).then(response => {
+      getProjectRabbitmq(this.queryList).then(response => {
         this.list = response
       })
     },
@@ -159,7 +154,7 @@ export default {
         addr: undefined,
         port: undefined,
         dir: undefined,
-        cluster: undefined,
+        username: undefined,
         password: undefined,
         env: this.env,
         project: this.project.id,
@@ -174,7 +169,7 @@ export default {
       this.resetTemp()
     },
     createData() {
-      addProjectRedis(this.temp).then(() => {
+      addProjectRabbitmq(this.temp).then(() => {
         this.$notify({
           title: '成功',
           message: '新增成功！',
@@ -191,7 +186,7 @@ export default {
       this.dialogVisible = true
     },
     updateData() {
-      updateProjectRedis(this.temp).then(() => {
+      updateProjectRabbitmq(this.temp).then(() => {
         this.getList()
         this.dialogVisible = false
         this.$notify({
@@ -202,9 +197,9 @@ export default {
         })
       })
     },
-    handleRedisInfo(redis) {
-      this.temp = Object.assign({}, redis)
-      this.redisDrawerVisible = true
+    handleRabbitmqInfo(rabbitmq) {
+      this.temp = Object.assign({}, rabbitmq)
+      this.rabbitmqDrawerVisible = true
     },
     handleDelete(id) {
       this.$confirm('确认删除', '提示', {
@@ -212,7 +207,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteProjectRedis(id).then(() => {
+        deleteProjectRabbitmq(id).then(() => {
           this.$notify({
             title: '成功',
             message: '删除成功！',

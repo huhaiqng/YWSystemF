@@ -41,6 +41,13 @@
 
           <div class="drawer-item">
             <el-row>
+              <el-col :span="12">来源：</el-col>
+              <el-col :span="12">{{ redis.origin }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
               <el-col :span="12">创建时间：</el-col>
               <el-col :span="12">{{ redis.created | parseTime('{y}-{m}-{d} {h}:{m}') }}</el-col>
             </el-row>

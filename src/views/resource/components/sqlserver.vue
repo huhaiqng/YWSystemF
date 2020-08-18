@@ -11,24 +11,14 @@
       </el-button>
     </div>
     <el-table :key="tableKey" :data="list" border fit highlight-current-row>
+      <el-table-column label="数据库名" align="center">
+        <template slot-scope="{row}">
+          <span class="link-type" @click="handleSQLServerInfo(row)">{{ row.name }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="地址" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleRedisInfo(row)">{{ row.addr }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="端口号" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.port }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="路径" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.dir }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="集群名" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.cluster }}</span>
+          <span>{{ row.addr }}</span>
         </template>
       </el-table-column>
       <el-table-column label="环境" align="center">
@@ -65,17 +55,14 @@
     </el-table>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
       <el-form ref="formData" :model="temp" label-position="left" label-width="100px" style="margin-left:30px;margin-right:30px">
+        <el-form-item label="数据库名" prop="name">
+          <el-input v-model="temp.name" style="width:60%" />
+        </el-form-item>
         <el-form-item label="地址" prop="name">
           <el-input v-model="temp.addr" style="width:60%" />
         </el-form-item>
-        <el-form-item label="端口号" prop="port">
-          <el-input v-model="temp.port" style="width:60%" />
-        </el-form-item>
-        <el-form-item label="路径" prop="dir">
-          <el-input v-model="temp.dir" style="width:60%" />
-        </el-form-item>
-        <el-form-item label="集群" prop="dir">
-          <el-input v-model="temp.cluster" style="width:60%" />
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="temp.username" style="width:60%" />
         </el-form-item>
         <el-form-item label="密码" prop="dir">
           <el-input v-model="temp.password" style="width:60%" />
@@ -100,16 +87,16 @@
         <el-button type="primary" @click="dialogStatus === 'create'?createData():updateData()">保存</el-button>
       </div>
     </el-dialog>
-    <el-drawer title="详情" :visible.sync="redisDrawerVisible" :with-header="false">
-      <redis-drawer-content :redis="temp" />
+    <el-drawer title="详情" :visible.sync="sqlserverDrawerVisible" :with-header="false">
+      <sqlserver-drawer-content :sqlserver="temp" />
     </el-drawer>
   </div>
 </template>
 <script>
-import { getProjectRedis, addProjectRedis, updateProjectRedis, deleteProjectRedis } from '@/api/resource'
-import RedisDrawerContent from '@/components/Drawer/redis'
+import { getProjectSQLServer, addProjectSQLServer, updateProjectSQLServer, deleteProjectSQLServer } from '@/api/resource'
+import SqlserverDrawerContent from '@/components/Drawer/sqlserver'
 export default {
-  components: { RedisDrawerContent },
+  components: { SqlserverDrawerContent },
   props: {
     env: { type: String, default: null },
     project: { type: Object, default: null },
@@ -119,14 +106,12 @@ export default {
     return {
       list: [],
       tableKey: 0,
-      hostList: [],
       dialogVisible: false,
-      redisDrawerVisible: false,
+      sqlserverDrawerVisible: false,
       temp: {
+        name: undefined,
         addr: undefined,
-        port: undefined,
-        dir: undefined,
-        cluster: undefined,
+        username: undefined,
         password: undefined,
         env: this.env,
         project: this.project.id,
@@ -150,16 +135,15 @@ export default {
   },
   methods: {
     getList() {
-      getProjectRedis(this.queryList).then(response => {
+      getProjectSQLServer(this.queryList).then(response => {
         this.list = response
       })
     },
     resetTemp() {
       this.temp = {
+        name: undefined,
         addr: undefined,
-        port: undefined,
-        dir: undefined,
-        cluster: undefined,
+        username: undefined,
         password: undefined,
         env: this.env,
         project: this.project.id,
@@ -174,7 +158,7 @@ export default {
       this.resetTemp()
     },
     createData() {
-      addProjectRedis(this.temp).then(() => {
+      addProjectSQLServer(this.temp).then(() => {
         this.$notify({
           title: '成功',
           message: '新增成功！',
@@ -191,7 +175,7 @@ export default {
       this.dialogVisible = true
     },
     updateData() {
-      updateProjectRedis(this.temp).then(() => {
+      updateProjectSQLServer(this.temp).then(() => {
         this.getList()
         this.dialogVisible = false
         this.$notify({
@@ -202,9 +186,9 @@ export default {
         })
       })
     },
-    handleRedisInfo(redis) {
-      this.temp = Object.assign({}, redis)
-      this.redisDrawerVisible = true
+    handleSQLServerInfo(sqlserver) {
+      this.temp = Object.assign({}, sqlserver)
+      this.sqlserverDrawerVisible = true
     },
     handleDelete(id) {
       this.$confirm('确认删除', '提示', {
@@ -212,7 +196,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteProjectRedis(id).then(() => {
+        deleteProjectSQLServer(id).then(() => {
           this.$notify({
             title: '成功',
             message: '删除成功！',
