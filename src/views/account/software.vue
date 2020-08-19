@@ -11,19 +11,19 @@
           <span>{{ $index + 1 + (listQuery.page - 1)*listQuery.limit }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="名称" align="center">
+        <template slot-scope="{row}">
+          <span class="link-type" @click="showDetail(row)">{{ row.use }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="用户名" align="center" width="200px">
         <template slot-scope="{row}">
-          <span class="link-type" @click="showDetail(row)">{{ row.username }}</span>
+          <span>{{ row.username }}</span>
         </template>
       </el-table-column>
       <el-table-column label="地址" align="center">
         <template slot-scope="{row}">
           <span>{{ row.addr }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="用途" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.use }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" width="200px">
@@ -159,7 +159,8 @@ export default {
     createData() {
       this.temp.password = encodeStr(this.temp.password)
       addAccount(this.temp).then(() => {
-        this.list.unshift(this.temp)
+        // this.list.unshift(this.temp)
+        this.getList()
         this.dialogVisible = false
         this.$notify({
           title: '成功',
@@ -170,6 +171,7 @@ export default {
       })
     },
     updateData() {
+      console.log(this.temp)
       this.temp.password = encodeStr(this.temp.password)
       updateAccount(this.temp).then(() => {
         const index = this.list.findIndex(v => v.id === this.temp.id)

@@ -307,7 +307,7 @@ export default {
         position: '阿里云',
         admin: 'root',
         password: '',
-        type: 'tomcat',
+        type: undefined,
         env: undefined,
         ins_num: 0,
         status: true,

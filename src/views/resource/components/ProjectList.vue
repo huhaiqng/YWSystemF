@@ -6,7 +6,7 @@
         <el-breadcrumb-item>项目</el-breadcrumb-item>
         <el-breadcrumb-item>项目管理</el-breadcrumb-item>
       </el-breadcrumb>
-      <el-button type="primary" icon="el-icon-edit" @click="handleCreate()">
+      <el-button type="primary" class="filter-item" icon="el-icon-edit" @click="handleCreate()">
         添加
       </el-button>
     </div>
