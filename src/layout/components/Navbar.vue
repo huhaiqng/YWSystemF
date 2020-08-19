@@ -104,7 +104,12 @@ export default {
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     },
     gotoAdmin() {
-      window.open(process.env.VUE_APP_ADMIN_URL, '_blank')
+      if (process.env.NODE_ENV === 'development') {
+        window.open(process.env.VUE_APP_ADMIN_URL, '_blank')
+      } else if (process.env.NODE_ENV === 'production') {
+        var ADMIN_URL = window.location.protocol + '//' + window.location.host + '/admin'
+        window.open(ADMIN_URL, '_blank')
+      }
     },
     handleChangeMyPassword() {
       this.dialogVisible = true

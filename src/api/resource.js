@@ -489,6 +489,38 @@ export function deleteProjectPHP(id) {
   })
 }
 
+// ProjectPython API
+export function getProjectPython(data) {
+  return request({
+    url: '/api/getProjectPython/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function addProjectPython(data) {
+  return request({
+    url: '/api/projectPython/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectPython(data) {
+  return request({
+    url: `/api/projectPython/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectPython(id) {
+  return request({
+    url: `/api/projectPython/${id}`,
+    method: 'delete'
+  })
+}
+
 // ProjectRabbitmq API
 export function getProjectRabbitmq(data) {
   return request({
