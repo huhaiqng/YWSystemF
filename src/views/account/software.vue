@@ -16,7 +16,7 @@
           <span class="link-type" @click="showDetail(row)">{{ row.use }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" align="center" width="200px">
+      <el-table-column label="用户名" align="center">
         <template slot-scope="{row}">
           <span>{{ row.username }}</span>
         </template>
@@ -41,6 +41,9 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
       <el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style="margin-left:30px;margin-right:30px">
+        <el-form-item label="名称" prop="use">
+          <el-input v-model="temp.use" style="width:60%" />
+        </el-form-item>
         <el-form-item label="用户名" prop="username">
           <el-input v-model="temp.username" style="width:60%" />
         </el-form-item>
@@ -52,9 +55,6 @@
         </el-form-item>
         <el-form-item label="地址" prop="username">
           <el-input v-model="temp.addr" style="width:60%" />
-        </el-form-item>
-        <el-form-item label="用途" prop="use">
-          <el-input v-model="temp.use" style="width:100%" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -72,6 +72,18 @@
           <h3 class="drawer-title">详情</h3>
           <div class="drawer-item">
             <el-row>
+              <el-col :span="12">名称：</el-col>
+              <el-col :span="12">{{ temp.use }}</el-col>
+            </el-row>
+          </div>
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">地址：</el-col>
+              <el-col :span="12">{{ temp.addr }}</el-col>
+            </el-row>
+          </div>
+          <div class="drawer-item">
+            <el-row>
               <el-col :span="12">用户名：</el-col>
               <el-col :span="12">{{ temp.username }}</el-col>
             </el-row>
@@ -80,12 +92,6 @@
             <el-row>
               <el-col :span="12">密码：</el-col>
               <el-col :span="12">{{ temp.password }}</el-col>
-            </el-row>
-          </div>
-          <div class="drawer-item">
-            <el-row>
-              <el-col :span="12">用途：</el-col>
-              <el-col :span="12">{{ temp.use }}</el-col>
             </el-row>
           </div>
           <div class="drawer-item">
