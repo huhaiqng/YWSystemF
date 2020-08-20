@@ -115,7 +115,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="管理端口号" prop="manage_port">
-              <el-input v-model="temp.ssh_port" style="width:60%" placeholder="SSH 端口号" />
+              <el-input v-model="temp.ssh_port" style="width:60%" placeholder="管理端口号" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -437,8 +437,8 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['name', 'ip', 'version', 'cpu', 'memory', 'disk', 'position', 'admin', 'type', 'env', 'status']
-        const filterVal = ['name', 'ip', 'version', 'cpu', 'memory', 'disk', 'position', 'admin', 'type', 'env', 'status']
+        const tHeader = ['name', 'ip', 'outside_ip', 'manage_port', 'version', 'cpu', 'memory', 'disk', 'position', 'admin', 'password', 'type', 'env', 'status']
+        const filterVal = ['name', 'ip', 'outside_ip', 'manage_port', 'version', 'cpu', 'memory', 'disk', 'position', 'admin', 'password', 'type', 'env', 'status']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,
