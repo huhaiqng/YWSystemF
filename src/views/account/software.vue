@@ -26,6 +26,11 @@
           <span>{{ row.addr }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="备注" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.remark }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" width="200px">
         <template slot-scope="{row}">
           <span>{{ row.created | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
@@ -53,8 +58,11 @@
             <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
           </span>
         </el-form-item>
-        <el-form-item label="地址" prop="username">
+        <el-form-item label="地址" prop="addr">
           <el-input v-model="temp.addr" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="temp.remark" style="width:60%" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -96,6 +104,12 @@
           </div>
           <div class="drawer-item">
             <el-row>
+              <el-col :span="12">备注：</el-col>
+              <el-col :span="12">{{ temp.remark }}</el-col>
+            </el-row>
+          </div>
+          <div class="drawer-item">
+            <el-row>
               <el-col :span="12">创建时间：</el-col>
               <el-col :span="12">{{ temp.created | parseTime('{y}-{m}-{d} {h}:{m}') }}</el-col>
             </el-row>
@@ -122,6 +136,7 @@ export default {
         password: null,
         addr: null,
         use: null,
+        remark: undefined,
         created: new Date()
       },
       listQuery: {
@@ -231,6 +246,7 @@ export default {
         password: null,
         addr: null,
         use: null,
+        remark: undefined,
         created: new Date()
       }
       this.passwordType = 'password'

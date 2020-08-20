@@ -40,9 +40,14 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="IP 地址" align="center">
+      <el-table-column label="内网 IP" align="center">
         <template slot-scope="{row}">
           <span class="link-type" @click="showDetail(row)">{{ row.ip }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="外网 IP" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.outside_ip }}</span>
         </template>
       </el-table-column>
       <el-table-column label="系统版本" align="center">
@@ -102,12 +107,30 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="60%">
       <el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style="margin-right:30px; margin-left:30px;">
-        <el-form-item label="主机名" prop="name">
-          <el-input v-model="temp.name" style="width:60%" placeholder="主机名" />
-        </el-form-item>
-        <el-form-item label="IP 地址" prop="ip">
-          <el-input v-model="temp.ip" style="width:60%" placeholder="IP 地址" />
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="主机名" prop="name">
+              <el-input v-model="temp.name" style="width:60%" placeholder="主机名" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="管理端口号" prop="manage_port">
+              <el-input v-model="temp.ssh_port" style="width:60%" placeholder="SSH 端口号" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="内网 IP" prop="ip">
+              <el-input v-model="temp.ip" style="width:60%" placeholder="内部 IP" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="外网 IP" prop="outside_ip">
+              <el-input v-model="temp.outside_ip" style="width:60%" placeholder="外部 IP" />
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="环境" prop="env">
@@ -119,7 +142,7 @@
           <el-col :span="12">
             <el-form-item label="系统版本" prop="version">
               <el-select v-model="temp.version" class="filter-item" placeholder="选择版本">
-                <el-option v-for="item in versionOptions" :key="item.id" :label="item.name_cn" :value="item.name_cn" />
+                <el-option v-for="item in versionOptions" :key="item.id" :label="item" :value="item" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -241,6 +264,8 @@ export default {
       temp: {
         name: undefined,
         ip: undefined,
+        outside_ip: '0.0.0.0',
+        manager_port: undefined,
         version: 'CentOS 7',
         cpu: 4,
         memory: '8G',
@@ -300,6 +325,8 @@ export default {
       this.temp = {
         name: undefined,
         ip: undefined,
+        outside_ip: '0.0.0.0',
+        ssh_port: undefined,
         version: 'CentOS 7',
         cpu: 4,
         memory: '8G',

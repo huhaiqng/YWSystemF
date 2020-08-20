@@ -13,8 +13,22 @@
 
           <div class="drawer-item">
             <el-row>
-              <el-col :span="12">IP 地址：</el-col>
+              <el-col :span="12">管理端口号：</el-col>
+              <el-col :span="12">{{ host.manage_port }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">内网 IP：</el-col>
               <el-col :span="12">{{ host.ip }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">外网 IP：</el-col>
+              <el-col :span="12">{{ host.outside_ip }}</el-col>
             </el-row>
           </div>
 
