@@ -1,10 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="queryList.name" placeholder="包名" style="width:200px" class="filter-item" @keyup.enter.native="getList" />
-      <el-select v-model="queryList.project" placeholder="项目名" clearable class="filter-item" style="width: 150px">
-        <el-option v-for="item in projectList" :key="item.name" :label="item.name" :value="item.name" />
-      </el-select>
+      <el-input v-model="queryList.inside_addr" placeholder="内网地址" style="width:200px" class="filter-item" @keyup.enter.native="getList" />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getList">
         搜索
       </el-button>
@@ -18,34 +15,39 @@
           <span>{{ $index + 1 + (queryList.page - 1)*queryList.limit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="包名" align="center">
+      <el-table-column label="内网地址" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
+          <span class="link-type" @click="showDetail(row)">{{ row.inside_addr }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="项目" align="center">
+      <el-table-column label="外网地址" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.project.name }}</span>
+          <span>{{ row.outside_addr }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="端口号" align="center">
+      <el-table-column label="路径" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.port }}</span>
+          <span>{{ row.dir }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="部署路径" align="center">
+      <el-table-column label="版本号" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.deploy_dir }}</span>
+          <span>{{ row.version }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="获取地址" align="center">
+      <el-table-column label="部署方式" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.download_addr }}</span>
+          <span>{{ row.method }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="功能" align="center">
+      <el-table-column label="来源" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.func }}</span>
+          <span>{{ row.origin }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="集群" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.cluster }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center">
@@ -68,25 +70,40 @@
     <pagination v-show="total>0" :total="total" :page.sync="queryList.page" :limit.sync="queryList.limit" @pagination="getList" />
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
       <el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style="margin-right:30px; margin-left:30px;">
-        <el-form-item label="包名" prop="name">
-          <el-input v-model="temp.name" style="width:60%" />
+        <el-form-item label="内网地址" prop="inside_addr">
+          <el-input v-model="temp.inside_addr" style="width:60%" />
         </el-form-item>
-        <el-form-item label="端口号" prop="port">
-          <el-input v-model="temp.port" style="width:60%" />
+        <el-form-item label="外网地址" prop="outside_addr">
+          <el-input v-model="temp.outside_addr" style="width:60%" />
         </el-form-item>
-        <el-form-item label="项目" prop="project">
-          <el-select v-model="temp.project" class="filter-item" style="width:60%">
-            <el-option v-for="item in projectList" :key="item.id" :label="item.name" :value="item.id" />
+        <el-form-item label="路径" prop="data_dir">
+          <el-input v-model="temp.dir" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="版本号" prop="version">
+          <el-input v-model="temp.version" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="管理员" prop="manger">
+          <el-input v-model="temp.manager" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="temp.password" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="部署方式" prop="method">
+          <el-select v-model="temp.method" class="filter-item" style="width:60%">
+            <el-option value="normal">normal</el-option>
+            <el-option value="docker">docker</el-option>
+            <el-option value="docker-compose">docker-compose</el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="部署路径" prop="deploy_dir">
-          <el-input v-model="temp.deploy_dir" style="width:60%" />
+        <el-form-item label="来源" prop="origin">
+          <el-select v-model="temp.origin" class="filter-item" style="width:60%">
+            <el-option value="自建">自建</el-option>
+            <el-option value="阿里云">阿里云</el-option>
+            <el-option value="华为云">华为云</el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="获取地址" prop="download_addr">
-          <el-input v-model="temp.download_addr" style="width:60%" />
-        </el-form-item>
-        <el-form-item label="功能" prop="func">
-          <el-input v-model="temp.func" style="width:60%" />
+        <el-form-item label="集群" prop="cluster">
+          <el-input v-model="temp.cluster" style="width:60%" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -98,32 +115,37 @@
         </el-button>
       </div>
     </el-dialog>
+    <el-drawer title="详情" :visible.sync="drawerVisible" :with-header="false">
+      <rabbitmq-instance-drawer :instance="instance" />
+    </el-drawer>
   </div>
 </template>
 
 <script>
-import { getProjects, addJavaPackage, getJavaPackageList, deleteJavaPackage, updateJavaPackage } from '@/api/resource'
+import { addRabbitmqInstance, deleteRabbitmqInstance, updateRabbitmqInstance, getRabbitmqInstance } from '@/api/instance'
 import Pagination from '@/components/Pagination'
+import RabbitmqInstanceDrawer from '@/components/Drawer/RabbitmqInstance'
 export default {
-  name: 'JavaPackage',
-  components: { Pagination },
+  name: 'RabbitmqInstance',
+  components: { Pagination, RabbitmqInstanceDrawer },
   data() {
     return {
       list: null,
-      projectList: null,
       total: 0,
       temp: {
-        name: '',
-        port: 8080,
-        project: '',
-        deploy_dir: '',
-        download_addr: '',
-        func: '',
+        inside_addr: undefined,
+        outside_addr: undefined,
+        dir: undefined,
+        version: '3.8',
+        manager: 'admin',
+        password: undefined,
+        method: 'normal',
+        origin: '自建',
+        cluster: undefined,
         created: new Date()
       },
       queryList: {
-        name: '',
-        project: '',
+        inside_addr: '',
         page: 0,
         limit: 10
       },
@@ -132,7 +154,9 @@ export default {
       textMap: {
         create: '新增',
         edit: '编辑'
-      }
+      },
+      drawerVisible: false,
+      instance: undefined
     }
   },
   created() {
@@ -140,25 +164,22 @@ export default {
   },
   methods: {
     getList() {
-      getJavaPackageList(this.queryList).then(response => {
+      getRabbitmqInstance(this.queryList).then(response => {
         this.list = response.results
         this.total = response.count
-        this.getProjectList()
-      })
-    },
-    getProjectList() {
-      getProjects().then(response => {
-        this.projectList = response
       })
     },
     restTemp() {
       this.temp = {
-        name: '',
-        port: 8080,
-        project: '',
-        deploy_dir: '',
-        download_addr: '',
-        func: '',
+        inside_addr: undefined,
+        outside_addr: undefined,
+        dir: undefined,
+        version: '3.8',
+        manager: 'admin',
+        password: undefined,
+        method: 'normal',
+        origin: '自建',
+        cluster: undefined,
         created: new Date()
       }
     },
@@ -169,7 +190,6 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row)
-      this.temp.project = this.temp.project.id
       this.dialogStatus = 'edit'
       this.dialogVisible = true
     },
@@ -179,7 +199,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteJavaPackage(id).then(() => {
+        deleteRabbitmqInstance(id).then(() => {
           this.$notify({
             title: '成功',
             message: '删除成功！',
@@ -196,19 +216,19 @@ export default {
       })
     },
     createData() {
-      addJavaPackage(this.temp).then(response => {
+      addRabbitmqInstance(this.temp).then(response => {
         this.getList()
         this.dialogVisible = false
         this.$notify({
           title: '成功',
-          message: '包新增成功！',
+          message: '新增成功！',
           type: 'success',
           duration: 2000
         })
       })
     },
     updateData() {
-      updateJavaPackage(this.temp).then(() => {
+      updateRabbitmqInstance(this.temp).then(() => {
         this.getList()
         this.dialogVisible = false
         this.$notify({
@@ -218,6 +238,10 @@ export default {
           duration: 2000
         })
       })
+    },
+    showDetail(row) {
+      this.instance = Object.assign({}, row)
+      this.drawerVisible = true
     }
   }
 }

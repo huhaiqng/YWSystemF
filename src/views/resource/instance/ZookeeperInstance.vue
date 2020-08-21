@@ -1,10 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="queryList.name" placeholder="数据库名" style="width:200px" class="filter-item" @keyup.enter.native="getList" />
-      <el-select v-model="queryList.project" placeholder="项目名" clearable class="filter-item" style="width: 150px">
-        <el-option v-for="item in projectList" :key="item.name" :label="item.name" :value="item.id" />
-      </el-select>
+      <el-input v-model="queryList.inside_addr" placeholder="内网地址" style="width:200px" class="filter-item" @keyup.enter.native="getList" />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getList">
         搜索
       </el-button>
@@ -18,19 +15,39 @@
           <span>{{ $index + 1 + (queryList.page - 1)*queryList.limit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="数据库名" align="center">
+      <el-table-column label="内网地址" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="showDetail(row)">{{ row.name }}</span>
+          <span class="link-type" @click="showDetail(row)">{{ row.inside_addr }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="项目" align="center">
+      <el-table-column label="外网地址" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.project.name }}</span>
+          <span>{{ row.outside_addr }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" align="center">
+      <el-table-column label="路径" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.username }}</span>
+          <span>{{ row.dir }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="版本号" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.version }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="部署方式" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.method }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="来源" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.origin }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="集群" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.cluster }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center">
@@ -53,22 +70,34 @@
     <pagination v-show="total>0" :total="total" :page.sync="queryList.page" :limit.sync="queryList.limit" @pagination="getList" />
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
       <el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style="margin-right:30px; margin-left:30px;">
-        <el-form-item label="数据库名" prop="name">
-          <el-input v-model="temp.name" style="width:60%" />
+        <el-form-item label="内网地址" prop="inside_addr">
+          <el-input v-model="temp.inside_addr" style="width:60%" />
         </el-form-item>
-        <el-form-item label="项目名" prop="project">
-          <el-select v-model="temp.project" class="filter-item" style="width:60%">
-            <el-option v-for="item in projectList" :key="item.id" :label="item.name" :value="item.id" />
+        <el-form-item label="外网地址" prop="outside_addr">
+          <el-input v-model="temp.outside_addr" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="路径" prop="data_dir">
+          <el-input v-model="temp.dir" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="版本号" prop="version">
+          <el-input v-model="temp.version" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="部署方式" prop="method">
+          <el-select v-model="temp.method" class="filter-item" style="width:60%">
+            <el-option value="normal">normal</el-option>
+            <el-option value="docker">docker</el-option>
+            <el-option value="docker-compose">docker-compose</el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="temp.username" style="width:60%" />
+        <el-form-item label="来源" prop="origin">
+          <el-select v-model="temp.origin" class="filter-item" style="width:60%">
+            <el-option value="自建">自建</el-option>
+            <el-option value="阿里云">阿里云</el-option>
+            <el-option value="华为云">华为云</el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="生产环境密码" prop="pro_password">
-          <el-input v-model="temp.pro_password" style="width:60%" />
-        </el-form-item>
-        <el-form-item label="测试环境密码" prop="test_password">
-          <el-input v-model="temp.test_password" style="width:60%" />
+        <el-form-item label="集群" prop="cluster">
+          <el-input v-model="temp.cluster" style="width:60%" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -81,35 +110,34 @@
       </div>
     </el-dialog>
     <el-drawer title="详情" :visible.sync="drawerVisible" :with-header="false">
-      <mysqldb :mysqldb="mysqldb" />
+      <zookeeper-instance-drawer :instance="instance" />
     </el-drawer>
   </div>
 </template>
 
 <script>
-import { getProjects, addMySQLDB, deleteMySQLDB, updateMySQLDB, getMySQLDB } from '@/api/resource'
+import { addZookeeperInstance, deleteZookeeperInstance, updateZookeeperInstance, getZookeeperInstance } from '@/api/instance'
 import Pagination from '@/components/Pagination'
-import { encodeStr, decodeStr } from '@/utils/base64'
-import Mysqldb from '@/components/Drawer/mysqldb'
+import ZookeeperInstanceDrawer from '@/components/Drawer/ZookeeperInstance'
 export default {
-  name: 'MySQLDB',
-  components: { Pagination, Mysqldb },
+  name: 'ZookeeperInstance',
+  components: { Pagination, ZookeeperInstanceDrawer },
   data() {
     return {
       list: null,
-      projectList: null,
       total: 0,
       temp: {
-        name: '',
-        project: '',
-        username: '',
-        pro_password: '',
-        test_password: '',
+        inside_addr: undefined,
+        outside_addr: undefined,
+        dir: undefined,
+        version: '4.0',
+        method: 'normal',
+        origin: '自建',
+        cluster: undefined,
         created: new Date()
       },
       queryList: {
-        name: '',
-        project: '',
+        inside_addr: '',
         page: 0,
         limit: 10
       },
@@ -120,7 +148,7 @@ export default {
         edit: '编辑'
       },
       drawerVisible: false,
-      mysqldb: ''
+      instance: undefined
     }
   },
   created() {
@@ -128,24 +156,20 @@ export default {
   },
   methods: {
     getList() {
-      getMySQLDB(this.queryList).then(response => {
+      getZookeeperInstance(this.queryList).then(response => {
         this.list = response.results
         this.total = response.count
-        this.getProjectList()
-      })
-    },
-    getProjectList() {
-      getProjects().then(response => {
-        this.projectList = response
       })
     },
     restTemp() {
       this.temp = {
-        name: '',
-        project: '',
-        username: '',
-        pro_password: '',
-        test_password: '',
+        inside_addr: undefined,
+        outside_addr: undefined,
+        dir: undefined,
+        version: '4.0',
+        method: 'normal',
+        origin: '自建',
+        cluster: undefined,
         created: new Date()
       }
     },
@@ -156,11 +180,8 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row)
-      this.temp.pro_password = decodeStr(this.temp.pro_password)
-      this.temp.test_password = decodeStr(this.temp.test_password)
       this.dialogStatus = 'edit'
       this.dialogVisible = true
-      this.temp.project = row.project.id
     },
     handleDelete(id) {
       this.$confirm('确认删除', '提示', {
@@ -168,7 +189,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteMySQLDB(id).then(() => {
+        deleteZookeeperInstance(id).then(() => {
           this.$notify({
             title: '成功',
             message: '删除成功！',
@@ -185,23 +206,19 @@ export default {
       })
     },
     createData() {
-      this.temp.pro_password = encodeStr(this.temp.pro_password)
-      this.temp.test_password = encodeStr(this.temp.test_password)
-      addMySQLDB(this.temp).then(response => {
+      addZookeeperInstance(this.temp).then(response => {
         this.getList()
         this.dialogVisible = false
         this.$notify({
           title: '成功',
-          message: '包新增成功！',
+          message: '新增成功！',
           type: 'success',
           duration: 2000
         })
       })
     },
     updateData() {
-      this.temp.pro_password = encodeStr(this.temp.pro_password)
-      this.temp.test_password = encodeStr(this.temp.test_password)
-      updateMySQLDB(this.temp).then(() => {
+      updateZookeeperInstance(this.temp).then(() => {
         this.getList()
         this.dialogVisible = false
         this.$notify({
@@ -213,9 +230,7 @@ export default {
       })
     },
     showDetail(row) {
-      this.mysqldb = Object.assign({}, row)
-      this.mysqldb.pro_password = decodeStr(this.mysqldb.pro_password)
-      this.mysqldb.test_password = decodeStr(this.mysqldb.test_password)
+      this.instance = Object.assign({}, row)
       this.drawerVisible = true
     }
   }

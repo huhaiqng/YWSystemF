@@ -67,18 +67,36 @@ export const constantRoutes = [
         name: 'Host',
         meta: { 'title': '主机' }
       },
-      // {
-      //   path: 'javaPackage',
-      //   component: () => import('@/views/resource/JavaPackage'),
-      //   name: 'JavaPackage',
-      //   meta: { 'title': 'JAR 包' }
-      // },
-      // {
-      //   path: 'MySQLDB',
-      //   component: () => import('@/views/resource/MySQLDB'),
-      //   name: 'MySQLDB',
-      //   meta: { 'title': 'MySQL DB' }
-      // },
+      {
+        path: 'mysqlInstance',
+        component: () => import('@/views/resource/instance/MySQLInstance'),
+        name: 'MySQLInstance',
+        meta: { 'title': 'MySQL 实例' }
+      },
+      {
+        path: 'redisInstance',
+        component: () => import('@/views/resource/instance/RedisInstance'),
+        name: 'RedisInstance',
+        meta: { 'title': 'Redis 实例' }
+      },
+      {
+        path: 'zookeeperInstance',
+        component: () => import('@/views/resource/instance/ZookeeperInstance'),
+        name: 'zookeeperInstance',
+        meta: { 'title': 'Zookeeper 实例' }
+      },
+      {
+        path: 'activemqInstance',
+        component: () => import('@/views/resource/instance/ActivemqInstance'),
+        name: 'activemqInstance',
+        meta: { 'title': 'Activemq 实例' }
+      },
+      {
+        path: 'rabbitmqInstance',
+        component: () => import('@/views/resource/instance/RabbitmqInstance'),
+        name: 'RabbitmqInstance',
+        meta: { 'title': 'Rabbitmq 实例' }
+      },
       {
         path: 'project',
         component: () => import('@/views/resource/project'),
