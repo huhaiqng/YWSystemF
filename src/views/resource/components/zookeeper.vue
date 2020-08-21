@@ -11,34 +11,34 @@
       </el-button>
     </div>
     <el-table :key="tableKey" :data="list" border fit highlight-current-row>
-      <el-table-column label="地址" align="center">
+      <el-table-column label="内网地址" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.addr }}</span>
+          <span>{{ row.instance.inside_addr }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="端口号" align="center">
+      <el-table-column label="外网地址" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.port }}</span>
+          <span>{{ row.instance.outside_addr }}</span>
         </template>
       </el-table-column>
       <el-table-column label="路径" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.dir }}</span>
+          <span>{{ row.instance.dir }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="环境" align="center">
-        <template>
-          <span>{{ temp.env }}</span>
+      <el-table-column label="版本号" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.instance.version }}</span>
         </template>
       </el-table-column>
       <el-table-column label="部署方式" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.method }}</span>
+          <span>{{ row.instance.method }}</span>
         </template>
       </el-table-column>
       <el-table-column label="来源" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.origin }}</span>
+          <span>{{ row.instance.origin }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center">
@@ -59,28 +59,10 @@
       </el-table-column>
     </el-table>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
-      <el-form ref="formData" :model="temp" label-position="left" label-width="100px" style="margin-left:30px;margin-right:30px">
-        <el-form-item label="地址" prop="name">
-          <el-input v-model="temp.addr" style="width:60%" />
-        </el-form-item>
-        <el-form-item label="端口号" prop="port">
-          <el-input v-model="temp.port" style="width:60%" />
-        </el-form-item>
-        <el-form-item label="路径" prop="dir">
-          <el-input v-model="temp.dir" style="width:60%" />
-        </el-form-item>
-        <el-form-item label="部署方式" prop="method">
-          <el-select v-model="temp.method" class="filter-item" style="width:60%">
-            <el-option value="normal">normal</el-option>
-            <el-option value="docker">docker</el-option>
-            <el-option value="docker-compose">docker-compose</el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="来源" prop="origin">
-          <el-select v-model="temp.origin" class="filter-item" style="width:60%">
-            <el-option value="自建">自建</el-option>
-            <el-option value="阿里云">阿里云</el-option>
-            <el-option value="华为云">华为云</el-option>
+      <el-form ref="formData" :model="temp" label-position="left" label-width="150px" style="margin-left:30px;margin-right:30px">
+        <el-form-item label="Zookeeper 实例" prop="instance">
+          <el-select v-model="temp.instance" style="width:60%">
+            <el-option v-for="item in instanceList" :key="item.id" :label="item.inside_addr" :value="item.id" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -93,6 +75,7 @@
 </template>
 <script>
 import { getProjectZookeeper, addProjectZookeeper, updateProjectZookeeper, deleteProjectZookeeper } from '@/api/resource'
+import { getZookeeperInstance } from '@/api/instance'
 export default {
   props: {
     env: { type: String, default: null },
@@ -103,21 +86,22 @@ export default {
     return {
       list: [],
       tableKey: 0,
-      hostList: [],
+      instanceList: [],
       dialogVisible: false,
       temp: {
-        addr: undefined,
-        port: undefined,
-        dir: undefined,
+        instance: undefined,
         env: this.env,
         project: this.project.id,
-        method: undefined,
-        origin: undefined,
         created: new Date()
       },
       queryList: {
         env: this.env,
         project: this.project.id
+      },
+      instanceQueryList: {
+        inside_addr: '',
+        page: 0,
+        limit: 10000
       },
       dialogStatus: 'create',
       textMap: {
@@ -135,15 +119,16 @@ export default {
         this.list = response
       })
     },
+    getInstanceList() {
+      getZookeeperInstance(this.instanceQueryList).then(response => {
+        this.instanceList = response
+      })
+    },
     resetTemp() {
       this.temp = {
-        addr: undefined,
-        port: undefined,
-        dir: undefined,
+        instance: undefined,
         env: this.env,
         project: this.project.id,
-        method: undefined,
-        origin: undefined,
         created: new Date()
       }
     },
@@ -151,6 +136,7 @@ export default {
       this.dialogVisible = true
       this.dialogStatus = 'create'
       this.resetTemp()
+      this.getInstanceList()
     },
     createData() {
       addProjectZookeeper(this.temp).then(() => {
@@ -168,6 +154,7 @@ export default {
       this.temp = Object.assign({}, row)
       this.dialogStatus = 'edit'
       this.dialogVisible = true
+      this.getInstanceList()
     },
     updateData() {
       updateProjectZookeeper(this.temp).then(() => {

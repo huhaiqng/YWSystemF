@@ -6,15 +6,15 @@
           <h3 class="drawer-title">详情</h3>
           <div class="drawer-item">
             <el-row>
-              <el-col :span="12">地址：</el-col>
-              <el-col :span="12">{{ redis.addr }}</el-col>
+              <el-col :span="12">内网地址：</el-col>
+              <el-col :span="12">{{ redis.inside_addr }}</el-col>
             </el-row>
           </div>
 
           <div class="drawer-item">
             <el-row>
-              <el-col :span="12">端口号：</el-col>
-              <el-col :span="12">{{ redis.port }}</el-col>
+              <el-col :span="12">外网地址：</el-col>
+              <el-col :span="12">{{ redis.outside_addr }}</el-col>
             </el-row>
           </div>
 
@@ -27,7 +27,7 @@
 
           <div class="drawer-item">
             <el-row>
-              <el-col :span="12">集群名：</el-col>
+              <el-col :span="12">集群：</el-col>
               <el-col :span="12">{{ redis.cluster }}</el-col>
             </el-row>
           </div>
@@ -36,6 +36,13 @@
             <el-row>
               <el-col :span="12">密码：</el-col>
               <el-col :span="12">{{ redis.password }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
+              <el-col :span="12">部署方式：</el-col>
+              <el-col :span="12">{{ redis.method }}</el-col>
             </el-row>
           </div>
 

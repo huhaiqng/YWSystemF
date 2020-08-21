@@ -116,16 +116,10 @@ export default {
       temp: {
         name: undefined,
         instance: undefined,
-        addr: undefined,
-        port: undefined,
-        dir: undefined,
-        role: undefined,
         username: undefined,
         password: undefined,
         env: this.env,
         project: this.project.id,
-        method: undefined,
-        origin: undefined,
         created: new Date()
       },
       queryList: {
@@ -163,16 +157,10 @@ export default {
       this.temp = {
         name: undefined,
         instance: undefined,
-        addr: undefined,
-        port: undefined,
-        dir: undefined,
-        role: undefined,
         username: undefined,
         password: undefined,
         env: this.env,
         project: this.project.id,
-        method: undefined,
-        origin: undefined,
         created: new Date()
       }
     },

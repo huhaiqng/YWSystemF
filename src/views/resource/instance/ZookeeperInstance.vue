@@ -17,7 +17,7 @@
       </el-table-column>
       <el-table-column label="内网地址" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="showDetail(row)">{{ row.inside_addr }}</span>
+          <span>{{ row.inside_addr }}</span>
         </template>
       </el-table-column>
       <el-table-column label="外网地址" align="center">
@@ -109,19 +109,15 @@
         </el-button>
       </div>
     </el-dialog>
-    <el-drawer title="详情" :visible.sync="drawerVisible" :with-header="false">
-      <zookeeper-instance-drawer :instance="instance" />
-    </el-drawer>
   </div>
 </template>
 
 <script>
 import { addZookeeperInstance, deleteZookeeperInstance, updateZookeeperInstance, getZookeeperInstance } from '@/api/instance'
 import Pagination from '@/components/Pagination'
-import ZookeeperInstanceDrawer from '@/components/Drawer/ZookeeperInstance'
 export default {
   name: 'ZookeeperInstance',
-  components: { Pagination, ZookeeperInstanceDrawer },
+  components: { Pagination },
   data() {
     return {
       list: null,
@@ -147,7 +143,6 @@ export default {
         create: '新增',
         edit: '编辑'
       },
-      drawerVisible: false,
       instance: undefined
     }
   },
@@ -228,10 +223,6 @@ export default {
           duration: 2000
         })
       })
-    },
-    showDetail(row) {
-      this.instance = Object.assign({}, row)
-      this.drawerVisible = true
     }
   }
 }
