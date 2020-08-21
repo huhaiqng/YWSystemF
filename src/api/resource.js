@@ -204,7 +204,7 @@ export function deleteMySQLDB(id) {
 // ProjectMySQLDB API
 export function getProjectMySQLDB(data) {
   return request({
-    url: '/api/projectMysqldb/',
+    url: '/api/getProjectMysqldb/',
     method: 'get',
     params: data
   })
@@ -396,7 +396,7 @@ export function deleteProjectWar(id) {
 // ProjectRedis API
 export function getProjectRedis(data) {
   return request({
-    url: '/api/projectRedis/',
+    url: '/api/getProjectRedis/',
     method: 'get',
     params: data
   })
@@ -524,7 +524,7 @@ export function deleteProjectPython(id) {
 // ProjectRabbitmq API
 export function getProjectRabbitmq(data) {
   return request({
-    url: '/api/projectRabbitmq/',
+    url: '/api/getProjectRabbitmq/',
     method: 'get',
     params: data
   })
@@ -556,7 +556,7 @@ export function deleteProjectRabbitmq(id) {
 // ProjectActivemq API
 export function getProjectActivemq(data) {
   return request({
-    url: '/api/projectActivemq/',
+    url: '/api/getProjectActivemq/',
     method: 'get',
     params: data
   })
@@ -588,7 +588,7 @@ export function deleteProjectActivemq(id) {
 // ProjectZookeeper API
 export function getProjectZookeeper(data) {
   return request({
-    url: '/api/projectZookeeper/',
+    url: '/api/getProjectZookeeper/',
     method: 'get',
     params: data
   })

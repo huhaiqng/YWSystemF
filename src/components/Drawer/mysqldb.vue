@@ -12,27 +12,6 @@
 
         <div class="drawer-item">
           <el-row>
-            <el-col :span="12">地址：</el-col>
-            <el-col :span="12">{{ mysqldb.addr }}</el-col>
-          </el-row>
-        </div>
-
-        <div class="drawer-item">
-          <el-row>
-            <el-col :span="12">端口号：</el-col>
-            <el-col :span="12">{{ mysqldb.port }}</el-col>
-          </el-row>
-        </div>
-
-        <div class="drawer-item">
-          <el-row>
-            <el-col :span="12">角色：</el-col>
-            <el-col :span="12">{{ mysqldb.role }}</el-col>
-          </el-row>
-        </div>
-
-        <div class="drawer-item">
-          <el-row>
             <el-col :span="12">用户名：</el-col>
             <el-col :span="12">{{ mysqldb.username }}</el-col>
           </el-row>
@@ -42,13 +21,6 @@
           <el-row>
             <el-col :span="12">密码：</el-col>
             <el-col :span="12">{{ mysqldb.password }}</el-col>
-          </el-row>
-        </div>
-
-        <div class="drawer-item">
-          <el-row>
-            <el-col :span="12">来源：</el-col>
-            <el-col :span="12">{{ mysqldb.origin }}</el-col>
           </el-row>
         </div>
 

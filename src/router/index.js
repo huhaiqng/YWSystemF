@@ -52,6 +52,23 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/project',
+    component: Layout,
+    redirect: '/index',
+    name: 'Project',
+    meta: { title: '项目管理', icon: 'component' },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/resource/project'),
+        name: 'Project',
+        meta: {
+          title: '项目管理'
+        }
+      }
+    ]
+  },
+  {
     path: '/resource',
     component: Layout,
     redirect: '/resource/host',
@@ -96,12 +113,6 @@ export const constantRoutes = [
         component: () => import('@/views/resource/instance/RabbitmqInstance'),
         name: 'RabbitmqInstance',
         meta: { 'title': 'Rabbitmq 实例' }
-      },
-      {
-        path: 'project',
-        component: () => import('@/views/resource/project'),
-        name: 'Project',
-        meta: { 'title': '项目' }
       }
     ]
   },
