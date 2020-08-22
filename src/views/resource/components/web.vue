@@ -36,9 +36,14 @@
           <span>{{ row.use }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="路径" align="center">
+      <el-table-column label="安装路径" align="center">
         <template slot-scope="{row}">
           <span>{{ row.dir }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="文件路径" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.file_dir }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center">
@@ -77,8 +82,11 @@
         <el-form-item label="用途" prop="use">
           <el-input v-model="temp.use" style="width:60%" placeholder="用途" />
         </el-form-item>
-        <el-form-item label="路径" prop="dir">
+        <el-form-item label="安装路径" prop="dir">
           <el-input v-model="temp.dir" style="width:60%" placeholder="路径" />
+        </el-form-item>
+        <el-form-item label="文件路径" prop="dir">
+          <el-input v-model="temp.file_dir" style="width:60%" placeholder="路径" />
         </el-form-item>
         <el-form-item label="用户名" prop="username">
           <el-input v-model="temp.username" style="width:60%" placeholder="用户名" />
