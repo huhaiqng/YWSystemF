@@ -1,6 +1,10 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
+      <el-input v-model="listQuery.use" placeholder="名称" style="width:400px" class="filter-item" @keyup.enter.native="getList" />
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getList">
+        搜索
+      </el-button>
       <el-button type="primary" class="filter-item" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
@@ -141,7 +145,8 @@ export default {
       },
       listQuery: {
         page: 1,
-        limit: 10
+        limit: 10,
+        use: ''
       },
       dialogVisible: false,
       dialogStatus: null,

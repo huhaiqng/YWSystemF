@@ -156,7 +156,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'software',
-        component: () => import('@/views/account/software'),
+        component: () => import('@/views/account/index'),
         name: 'Software',
         meta: {
           title: '账号管理'
