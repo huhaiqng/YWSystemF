@@ -27,7 +27,7 @@
       </el-table-column>
       <el-table-column label="地址" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.addr }}</span>
+          <span class="link-type"><a :href="row.addr" target="blank">{{ row.addr }}</a></span>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center">

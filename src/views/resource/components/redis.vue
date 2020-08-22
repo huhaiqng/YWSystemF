@@ -23,7 +23,7 @@
       </el-table-column>
       <el-table-column label="路径" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.instance.addr }}</span>
+          <span>{{ row.instance.dir }}</span>
         </template>
       </el-table-column>
       <el-table-column label="版本" align="center">
