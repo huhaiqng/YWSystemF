@@ -91,8 +91,13 @@ export default {
       }
     },
     setComponentIs(software) {
-      Vue.component(software, res => require([`./components/${software}`], res))
-      this.currentComponent = software
+      if (software === 'nginx' || software === 'apache' || software === 'iis') {
+        Vue.component(software, res => require(['./components/web'], res))
+        this.currentComponent = software
+      } else {
+        Vue.component(software, res => require([`./components/${software}`], res))
+        this.currentComponent = software
+      }
     }
   }
 }

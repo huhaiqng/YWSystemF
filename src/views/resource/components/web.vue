@@ -96,7 +96,7 @@
       <host-drawer-content :host="hostTemp" />
     </el-drawer>
     <el-drawer title="详情" :visible.sync="webDrawerVisible" :with-header="false">
-      <web-drawer-content :web="temp" />
+      <web-drawer-content :web="webInfo" />
     </el-drawer>
   </div>
 </template>
@@ -117,6 +117,7 @@ export default {
       list: [],
       tableKey: 0,
       listLoading: true,
+      webInfo: undefined,
       hostList: [],
       dialogVisible: false,
       dialogStatus: 'create',
@@ -252,7 +253,7 @@ export default {
       this.hostDrawerVisible = true
     },
     handleWebInfo(web) {
-      this.temp = Object.assign({}, web)
+      this.webInfo = Object.assign({}, web)
       this.webDrawerVisible = true
     },
     handleDelete(id, index) {

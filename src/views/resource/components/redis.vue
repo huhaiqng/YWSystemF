@@ -77,13 +77,13 @@
       </div>
     </el-dialog>
     <el-drawer title="详情" :visible.sync="redisDrawerVisible" :with-header="false">
-      <redis-drawer-content :redis="temp" />
+      <redis-drawer-content :instance="instance" />
     </el-drawer>
   </div>
 </template>
 <script>
 import { getProjectRedis, addProjectRedis, updateProjectRedis, deleteProjectRedis } from '@/api/resource'
-import RedisDrawerContent from '@/components/Drawer/redis'
+import RedisDrawerContent from '@/components/Drawer/RedisInstance'
 import { getRedisInstance } from '@/api/instance'
 export default {
   components: { RedisDrawerContent },
@@ -96,6 +96,7 @@ export default {
     return {
       list: [],
       tableKey: 0,
+      instance: 0,
       instanceList: [],
       dialogVisible: false,
       redisDrawerVisible: false,
@@ -180,7 +181,7 @@ export default {
       })
     },
     handleRedisInfo(redis) {
-      this.temp = Object.assign({}, redis)
+      this.instance = Object.assign({}, redis)
       this.redisDrawerVisible = true
     },
     handleDelete(id) {
