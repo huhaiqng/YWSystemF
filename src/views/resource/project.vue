@@ -8,7 +8,6 @@
               :data="treeData"
               perf="tree"
               node-key="label"
-              :default-expanded-keys="['生产环境']"
               style="background-color: #f0f2f5;padding: 20px;"
               @node-click="handleNodeClick"
             />
