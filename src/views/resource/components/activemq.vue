@@ -26,11 +26,6 @@
           <span>{{ row.instance.dir }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="版本号" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.instance.version }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="部署方式" align="center">
         <template slot-scope="{row}">
           <span>{{ row.instance.method }}</span>
@@ -41,9 +36,14 @@
           <span>{{ row.instance.origin }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="集群" align="center">
+      <el-table-column label="用户名" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.instance.cluster }}</span>
+          <span>{{ row.username }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="密码" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.password }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center">
@@ -69,6 +69,12 @@
           <el-select v-model="temp.instance" style="width:60%">
             <el-option v-for="item in instanceList" :key="item.id" :label="item.inside_addr" :value="item.id" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="用户名" prop="outside_addr">
+          <el-input v-model="temp.username" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="密码" prop="outside_addr">
+          <el-input v-model="temp.password" style="width:60%" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -104,6 +110,8 @@ export default {
         instance: undefined,
         env: this.env,
         project: this.project.id,
+        username: undefined,
+        password: undefined,
         created: new Date()
       },
       queryList: {
@@ -164,6 +172,7 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row)
+      this.temp.instance = this.temp.instance.id
       this.dialogStatus = 'edit'
       this.dialogVisible = true
       this.getInstanceList()

@@ -20,6 +20,13 @@
 
           <div class="drawer-item">
             <el-row>
+              <el-col :span="12">Web 地址：</el-col>
+              <el-col :span="12">{{ instance.web_addr }}</el-col>
+            </el-row>
+          </div>
+
+          <div class="drawer-item">
+            <el-row>
               <el-col :span="12">路径：</el-col>
               <el-col :span="12">{{ instance.dir }}</el-col>
             </el-row>

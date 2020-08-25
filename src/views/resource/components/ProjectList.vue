@@ -159,7 +159,6 @@ export default {
     updateData() {
       updateProjects(this.temp).then(() => {
         this.$emit('getList')
-        console.log(this.temp)
         this.dialogVisible = false
         this.$notify({
           title: '成功',

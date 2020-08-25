@@ -164,6 +164,7 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row)
+      this.temp.instance = this.temp.instance.id
       this.dialogStatus = 'edit'
       this.dialogVisible = true
       this.getInstanceList()

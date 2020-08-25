@@ -135,9 +135,9 @@ export default {
       },
       temp: {
         host: [],
-        public_ip: '',
+        public_ip: '0.0.0.0',
         domain: '',
-        url: '',
+        url: 'https://',
         env: this.env,
         project: this.project.id,
         software: this.software,
@@ -185,11 +185,11 @@ export default {
       return this.temp.domain
     }
   },
-  watch: {
-    domain() {
-      this.temp.url = 'https://' + this.temp.domain
-    }
-  },
+  // watch: {
+  //   domain() {
+  //     this.temp.url = 'https://' + this.temp.domain
+  //   }
+  // },
   created() {
     this.getList()
   },
@@ -203,9 +203,9 @@ export default {
     resetTemp() {
       this.temp = {
         host: [],
-        public_ip: '',
+        public_ip: '0.0.0.0',
         domain: '',
-        url: '',
+        url: 'https://',
         env: this.env,
         project: this.project.id,
         software: this.software,
