@@ -172,8 +172,10 @@ export default {
       },
       hostQuery: {
         ip: '',
-        type: this.software,
-        env: this.env,
+        // type: this.software,
+        // env: this.env,
+        type: '',
+        env: '',
         limit: 10000
       }
     }
