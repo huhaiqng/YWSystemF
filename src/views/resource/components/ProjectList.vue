@@ -6,6 +6,12 @@
         <el-breadcrumb-item>项目</el-breadcrumb-item>
         <el-breadcrumb-item>项目管理</el-breadcrumb-item>
       </el-breadcrumb>
+      <el-select v-model="queryList.sort" placeholder="类别" clearable class="filter-item" style="width: 250px" @change="getList">
+        <el-option label="全部" value="">全部</el-option>
+        <el-option label="佳峰珠宝" value="jpark">佳峰珠宝</el-option>
+        <el-option label="零烦恼" value="lfn">零烦恼</el-option>
+        <el-option label="其它" value="other">其它</el-option>
+      </el-select>
       <el-button type="primary" class="filter-item" icon="el-icon-edit" @click="handleCreate()">
         添加
       </el-button>
@@ -13,8 +19,6 @@
     <el-table :key="0" :data="projects" border fit highlight-current-row style="width: 100%">
       <el-table-column label="序号" align="center" width="50px">
         <template slot-scope="{$index}">
-          <!-- <span>{{ $index + 1 }}</span>
-           -->
           {{ $index + 1 + (queryList.page - 1)*queryList.limit }}
         </template>
       </el-table-column>
@@ -61,6 +65,13 @@
             <el-option v-for="item in envlist" :key="item.id" :label="item.name_cn" :value="item.id" />
           </el-select>
         </el-form-item>
+        <el-form-item label="环境" prop="sort">
+          <el-select v-model="temp.sort" placeholder="类别" style="width:60%">
+            <el-option label="佳峰珠宝" value="jpark">佳峰珠宝</el-option>
+            <el-option label="零烦恼" value="lfn">零烦恼</el-option>
+            <el-option label="其它" value="other">其它</el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">
@@ -90,7 +101,8 @@ export default {
       temp: {
         name: '',
         software: undefined,
-        env: undefined
+        env: undefined,
+        sort: undefined
       },
       dialogStatus: 'create',
       dialogVisible: false,
@@ -99,6 +111,7 @@ export default {
         edit: '编辑'
       },
       queryList: {
+        sort: '',
         page: 1,
         limit: 10
       },
