@@ -15,16 +15,19 @@
         </div>
       </el-col>
       <el-col :span="20">
-        <component
-          :is="currentComponent"
-          :env="env"
-          :project="project"
-          :software="software"
-          :jar="jar"
-          :projects="projects"
-          :envlist="envList"
-          @getList="getList"
-        />
+        <div class="project-web">
+          <el-scrollbar>
+            <component
+              :is="currentComponent"
+              :env="env"
+              :project="project"
+              :software="software"
+              :jar="jar"
+              :envlist="envList"
+              @getList="getList"
+            />
+          </el-scrollbar>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -44,7 +47,11 @@ export default {
       software: null,
       jar: null,
       projects: null,
-      envList: undefined
+      envList: undefined,
+      queryList: {
+        page: 0,
+        limit: 10000
+      }
     }
   },
   created() {
@@ -57,7 +64,7 @@ export default {
   methods: {
     getList() {
       this.treeData = []
-      getProjects().then(response => {
+      getProjects(this.queryList).then(response => {
         this.projects = response
         this.treeData.push({ id: 0, label: '项目管理', name: 'project_list' })
         for (var n = 0; n < this.envList.length; n++) {
@@ -106,6 +113,16 @@ export default {
   flex: 1;
   border-right:1px solid rgba(211,219,222,1);
   background-color: #f0f2f5;
+  /deep/.el-scrollbar{
+    height: calc(100vh - 84px);
+    .el-scrollbar__wrap{
+      overflow-x: hidden;
+    }
+  }
+}
+
+.project-web{
+  flex: 1;
   /deep/.el-scrollbar{
     height: calc(100vh - 84px);
     .el-scrollbar__wrap{

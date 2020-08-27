@@ -13,7 +13,9 @@
     <el-table :key="0" :data="projects" border fit highlight-current-row style="width: 100%">
       <el-table-column label="序号" align="center" width="50px">
         <template slot-scope="{$index}">
-          <span>{{ $index + 1 }}</span>
+          <!-- <span>{{ $index + 1 }}</span>
+           -->
+          {{ $index + 1 + (queryList.page - 1)*queryList.limit }}
         </template>
       </el-table-column>
       <el-table-column label="项目名" align="center">
@@ -43,6 +45,7 @@
         </template>
       </el-table-column>
     </el-table>
+    <pagination v-show="total>0" :total="total" :page.sync="queryList.page" :limit.sync="queryList.limit" @pagination="getList" />
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible">
       <el-form ref="dataForm" :model="temp" label-position="left" label-width="100px" style="margin-right:30px; margin-left:30px;">
         <el-form-item label="项目名" prop="name">
@@ -72,11 +75,12 @@
 </template>
 
 <script>
-import { getSoftware, addProjects, deleteProjects, updateProjects } from '@/api/resource'
+import { getProjects, getSoftware, addProjects, deleteProjects, updateProjects } from '@/api/resource'
+import Pagination from '@/components/Pagination'
 export default {
   name: 'ProjectList',
+  components: { Pagination },
   props: {
-    projects: { type: Array, default: null },
     envlist: { type: Array, default: null }
   },
   data() {
@@ -93,10 +97,25 @@ export default {
       textMap: {
         create: '新增',
         edit: '编辑'
-      }
+      },
+      queryList: {
+        page: 1,
+        limit: 10
+      },
+      projects: undefined,
+      total: 0
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
+    getList() {
+      getProjects(this.queryList).then(response => {
+        this.projects = response.results
+        this.total = response.count
+      })
+    },
     restTemp() {
       this.temp = {
         name: '',

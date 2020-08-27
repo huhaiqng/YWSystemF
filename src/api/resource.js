@@ -29,10 +29,11 @@ export function deleteHost(id) {
 }
 
 // Project API
-export function getProjects() {
+export function getProjects(data) {
   return request({
     url: '/api/getProjects/',
-    method: 'get'
+    method: 'get',
+    params: data
   })
 }
 
