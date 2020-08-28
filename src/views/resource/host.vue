@@ -115,7 +115,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="管理端口号" prop="manage_port">
-              <el-input v-model="temp.ssh_port" style="width:60%" placeholder="管理端口号" />
+              <el-input v-model="temp.manage_port" style="width:60%" placeholder="管理端口号" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -265,7 +265,7 @@ export default {
         name: undefined,
         ip: undefined,
         outside_ip: '0.0.0.0',
-        manager_port: undefined,
+        manage_port: undefined,
         version: 'CentOS 7',
         cpu: 4,
         memory: '8G',
@@ -326,7 +326,7 @@ export default {
         name: undefined,
         ip: undefined,
         outside_ip: '0.0.0.0',
-        ssh_port: undefined,
+        manage_port: undefined,
         version: 'CentOS 7',
         cpu: 4,
         memory: '8G',
