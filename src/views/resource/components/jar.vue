@@ -11,12 +11,12 @@
       </el-button>
     </div>
     <el-table :key="tableKey" :data="list" border fit highlight-current-row>
-      <el-table-column label="名称" align="center">
+      <el-table-column label="名称" align="center" width="280">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="路径" align="center">
+      <el-table-column label="路径" align="center" width="340">
         <template slot-scope="{row}">
           <span>{{ row.dir }}</span>
         </template>
@@ -41,7 +41,7 @@
           <span>{{ row.method }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center">
+      <el-table-column label="创建时间" align="center" width="150">
         <template slot-scope="{row}">
           <span>{{ row.created | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>

@@ -26,7 +26,7 @@
           <span>{{ row.public_ip }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="访问地址" align="center" width="240px">
+      <el-table-column label="访问地址" align="center" width="280">
         <template slot-scope="{row}">
           <span class="link-type"><a :href="row.url" target="blank">{{ row.url }}</a></span>
         </template>
@@ -41,12 +41,12 @@
           <span>{{ row.dir }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="文件路径" align="center">
+      <el-table-column label="文件路径" align="center" width="240">
         <template slot-scope="{row}">
           <span>{{ row.file_dir }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center">
+      <el-table-column label="创建时间" align="center" width="150">
         <template slot-scope="{row}">
           <span>{{ row.created | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
