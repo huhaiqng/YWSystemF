@@ -16,11 +16,11 @@
           <span class="link-type" @click="handleActivemqInfo(row.instance)">{{ row.instance.inside_addr }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="外网地址" align="center">
+      <!-- <el-table-column label="外网地址" align="center">
         <template slot-scope="{row}">
           <span>{{ row.instance.outside_addr }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="路径" align="center">
         <template slot-scope="{row}">
           <span>{{ row.instance.dir }}</span>
@@ -46,11 +46,11 @@
           <span>{{ row.password }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center">
+      <!-- <el-table-column label="创建时间" align="center">
         <template slot-scope="{row}">
           <span>{{ row.created | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="操作" align="center" width="80px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-dropdown type="primary">
@@ -149,6 +149,8 @@ export default {
         instance: undefined,
         env: this.env,
         project: this.project.id,
+        username: undefined,
+        password: undefined,
         created: new Date()
       }
     },

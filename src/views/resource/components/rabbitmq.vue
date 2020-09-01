@@ -16,21 +16,21 @@
           <span class="link-type" @click="handleRabbitmqInfo(row.instance)">{{ row.instance.inside_addr }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="外网地址" align="center">
+      <!-- <el-table-column label="外网地址" align="center">
         <template slot-scope="{row}">
           <span>{{ row.instance.outside_addr }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="路径" align="center">
         <template slot-scope="{row}">
           <span>{{ row.instance.dir }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="版本号" align="center">
+      <!-- <el-table-column label="版本号" align="center">
         <template slot-scope="{row}">
           <span>{{ row.instance.version }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="部署方式" align="center">
         <template slot-scope="{row}">
           <span>{{ row.instance.method }}</span>
@@ -46,11 +46,21 @@
           <span>{{ row.instance.cluster }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center">
+      <el-table-column label="用户名" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.username }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="密码" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.password }}</span>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="创建时间" align="center">
         <template slot-scope="{row}">
           <span>{{ row.created | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="操作" align="center" width="80px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-dropdown type="primary">
@@ -69,6 +79,12 @@
           <el-select v-model="temp.instance" style="width:60%">
             <el-option v-for="item in instanceList" :key="item.id" :label="item.inside_addr" :value="item.id" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="用户名" prop="outside_addr">
+          <el-input v-model="temp.username" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="密码" prop="outside_addr">
+          <el-input v-model="temp.password" style="width:60%" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -104,6 +120,8 @@ export default {
         instance: undefined,
         env: this.env,
         project: this.project.id,
+        username: undefined,
+        password: undefined,
         created: new Date()
       },
       queryList: {
@@ -141,6 +159,8 @@ export default {
         instance: undefined,
         env: this.env,
         project: this.project.id,
+        username: undefined,
+        password: undefined,
         created: new Date()
       }
     },

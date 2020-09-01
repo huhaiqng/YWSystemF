@@ -25,6 +25,11 @@
           <span>{{ row.outside_addr }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="Web 地址" align="center">
+        <template slot-scope="{row}">
+          <span class="link-type"><a :href="row.web_addr" target="blank">{{ row.web_addr }}</a></span>
+        </template>
+      </el-table-column>
       <el-table-column label="路径" align="center">
         <template slot-scope="{row}">
           <span>{{ row.dir }}</span>
@@ -75,6 +80,9 @@
         </el-form-item>
         <el-form-item label="外网地址" prop="outside_addr">
           <el-input v-model="temp.outside_addr" style="width:60%" />
+        </el-form-item>
+        <el-form-item label="Web 地址" prop="web_addr">
+          <el-input v-model="temp.web_addr" style="width:60%" />
         </el-form-item>
         <el-form-item label="路径" prop="data_dir">
           <el-input v-model="temp.dir" style="width:60%" />
@@ -135,6 +143,7 @@ export default {
       temp: {
         inside_addr: undefined,
         outside_addr: undefined,
+        web_addr: undefined,
         dir: undefined,
         version: '3.8',
         manager: 'admin',
@@ -173,6 +182,7 @@ export default {
       this.temp = {
         inside_addr: undefined,
         outside_addr: undefined,
+        web_addr: undefined,
         dir: undefined,
         version: '3.8',
         manager: 'admin',
