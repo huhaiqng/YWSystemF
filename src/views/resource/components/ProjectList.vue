@@ -168,6 +168,7 @@ export default {
             type: 'success',
             duration: 2000
           })
+          this.getList()
         })
       }).catch(() => {
         this.$message({
@@ -186,6 +187,7 @@ export default {
           type: 'success',
           duration: 2000
         })
+        this.getList()
       })
     },
     updateData() {
@@ -198,6 +200,7 @@ export default {
           type: 'success',
           duration: 2000
         })
+        this.getList()
       })
     }
   }
