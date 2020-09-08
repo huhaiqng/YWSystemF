@@ -10,11 +10,10 @@ jobs:
     # 设置 .npmrc 文件以发布到 GitHub 包
     - uses: actions/setup-node@v1
       with:
-        node-version: '12.x'
         registry-url: 'https://npm.pkg.github.com'
         # 默认为拥有工作流程文件的用户或组织
         scope: '@octocat'
     - run: npm install
     - run: npm publish
       env:
-        NODE_AUTH_TOKEN: 'hu158168'
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
