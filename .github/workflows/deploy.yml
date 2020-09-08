@@ -13,6 +13,7 @@ jobs:
         registry-url: 'https://npm.pkg.github.com'
         # 默认为拥有工作流程文件的用户或组织
         scope: '@octocat'
+    - run: cat .npmrc
     - run: npm install
     - run: npm publish
       env:
