@@ -65,8 +65,8 @@
             <el-option v-for="item in envlist" :key="item.id" :label="item.name_cn" :value="item.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="环境" prop="sort">
-          <el-select v-model="temp.sort" placeholder="类别" style="width:60%">
+        <el-form-item label="类别" prop="sort">
+          <el-select v-model="temp.sort" style="width:60%">
             <el-option label="佳峰珠宝" value="jpark">佳峰珠宝</el-option>
             <el-option label="零烦恼" value="lfn">零烦恼</el-option>
             <el-option label="其它" value="other">其它</el-option>
