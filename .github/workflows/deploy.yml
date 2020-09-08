@@ -7,16 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    # 设置 .npmrc 文件以发布到 GitHub 包
+    # Setup .npmrc file to publish to GitHub Packages
     - uses: actions/setup-node@v1
       with:
+        node-version: '12.x'
         registry-url: 'https://npm.pkg.github.com'
-        # 默认为拥有工作流程文件的用户或组织
+        # Defaults to the user or organization that owns the workflow file
         scope: '@octocat'
-    - run: echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >/home/runner/work/_temp/.npmrc
-    - run: echo "@octocat:registry=https://npm.pkg.github.com" >>/home/runner/work/_temp/.npmrc
-    - run: echo "always-auth=true" >>/home/runner/work/_temp/.npmrc
-    - run: cat /home/runner/work/_temp/.npmrc
     - run: npm install
     - run: npm publish
       env:
