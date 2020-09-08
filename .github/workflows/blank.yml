@@ -35,8 +35,8 @@ jobs:
       run: |
         npm install
         npm run build:prod
-    - name: Upload
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: dist
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v2
+      with:
+        name: homework
+        path: dist
