@@ -71,7 +71,7 @@ export const constantRoutes = [
   {
     path: '/resource',
     component: Layout,
-    redirect: '/resource/host',
+    redirect: '/host',
     name: 'Resource',
     meta: {
       'title': '资源管理',
