@@ -167,6 +167,7 @@ export default {
       this.dialogStatus = 'edit'
       this.dialogVisible = true
       this.getInstanceList()
+      this.temp.instance = row.instance.id
     },
     updateData() {
       updateProjectRedis(this.temp).then(() => {
