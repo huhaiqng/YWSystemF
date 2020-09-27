@@ -178,6 +178,7 @@ export default {
       this.dialogStatus = 'edit'
       this.dialogVisible = true
       this.getInstanceList()
+      this.temp.instance = row.instance.id
     },
     updateData() {
       updateProjectActivemq(this.temp).then(() => {
