@@ -49,6 +49,7 @@ export default {
       projects: null,
       envList: undefined,
       queryList: {
+        name: '',
         sort: '',
         page: 0,
         limit: 10000
