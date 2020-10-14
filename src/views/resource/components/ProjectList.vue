@@ -6,12 +6,16 @@
         <el-breadcrumb-item>项目</el-breadcrumb-item>
         <el-breadcrumb-item>项目管理</el-breadcrumb-item>
       </el-breadcrumb>
-      <el-select v-model="queryList.sort" placeholder="类别" clearable class="filter-item" style="width: 250px" @change="getList">
+      <el-input v-model="queryList.name" placeholder="项目名" style="width:200px" class="filter-item" @keyup.enter.native="getList" />
+      <el-select v-model="queryList.sort" placeholder="类别" clearable class="filter-item" style="width: 200px" @change="getList">
         <el-option label="全部" value="">全部</el-option>
         <el-option label="佳峰珠宝" value="jpark">佳峰珠宝</el-option>
         <el-option label="零烦恼" value="lfn">零烦恼</el-option>
         <el-option label="其它" value="other">其它</el-option>
       </el-select>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="getList">
+        搜索
+      </el-button>
       <el-button type="primary" class="filter-item" icon="el-icon-edit" @click="handleCreate()">
         添加
       </el-button>
@@ -111,6 +115,7 @@ export default {
         edit: '编辑'
       },
       queryList: {
+        name: '',
         sort: '',
         page: 1,
         limit: 10
