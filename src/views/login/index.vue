@@ -1,5 +1,9 @@
 <template>
   <div class="login-container">
+    <div class="background">
+      <img :src="bgimg" width="100%" height="100%" alt="">
+    </div>
+
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
@@ -61,6 +65,7 @@
 <script>
 import SocialSign from './components/SocialSignin'
 import { getEnv, getSoftware } from '@/api/resource'
+import bgimg from '@/images/bg.jpg'
 
 export default {
   name: 'Login',
@@ -80,7 +85,8 @@ export default {
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+      bgimg: bgimg
     }
   },
   watch: {
@@ -193,9 +199,17 @@ $cursor: #fff;
       height: 47px;
       caret-color: $cursor;
 
-      &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: $cursor !important;
+      // &:-webkit-autofill {
+      //   box-shadow: 0 0 0px 1000px $bg inset !important;
+      //   -webkit-text-fill-color: $cursor !important;
+      // }
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus,
+      &:-webkit-autofill:active {
+        transition-delay: 99999s;
+        transition: color 99999s ease-out, background-color 99999s ease-out;
       }
     }
   }
@@ -217,7 +231,7 @@ $light_gray:#eee;
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: $bg;
+  // background-color: $bg;
   overflow: hidden;
 
   .login-form {
@@ -281,6 +295,13 @@ $light_gray:#eee;
     .thirdparty-button {
       display: none;
     }
+  }
+
+  .background{
+    width:100%;
+    height:100%;
+    z-index:-1;
+    position: absolute;
   }
 }
 </style>
