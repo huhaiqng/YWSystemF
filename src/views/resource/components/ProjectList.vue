@@ -41,6 +41,11 @@
           <span v-for="(item, index) in row.env" :key="item.id">{{ index===0?item.name_cn:", " + item.name_cn }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="状态" align="center" width="100px">
+        <template slot-scope="{row}">
+          <span>{{ row.status }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="80px" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-dropdown type="primary">
@@ -76,6 +81,12 @@
             <el-option label="其它" value="other">其它</el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-select v-model="temp.status" style="width:60%">
+            <el-option label="使用" value="使用">使用</el-option>
+            <el-option label="停用" value="停用">停用</el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">
@@ -102,11 +113,13 @@ export default {
     return {
       list: null,
       softwareList: null,
+      status: '1',
       temp: {
         name: '',
         software: undefined,
         env: undefined,
-        sort: undefined
+        sort: undefined,
+        status: '使用'
       },
       dialogStatus: 'create',
       dialogVisible: false,
@@ -138,7 +151,8 @@ export default {
       this.temp = {
         name: '',
         software: undefined,
-        env: undefined
+        env: undefined,
+        status: '使用'
       }
     },
     handleCreate() {

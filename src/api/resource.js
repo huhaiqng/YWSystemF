@@ -681,3 +681,34 @@ export function deleteProjectSQLServer(id) {
     method: 'delete'
   })
 }
+
+// ProjectCodeaddr API
+export function getProjectCodeaddr() {
+  return request({
+    url: '/api/projectCodeaddr/',
+    method: 'get'
+  })
+}
+
+export function addProjectCodeaddr(data) {
+  return request({
+    url: '/api/projectCodeaddr/',
+    method: 'post',
+    data
+  })
+}
+
+export function updateProjectCodeaddr(data) {
+  return request({
+    url: `/api/projectCodeaddr/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProjectCodeaddr(id) {
+  return request({
+    url: `/api/projectCodeaddr/${id}`,
+    method: 'delete'
+  })
+}
