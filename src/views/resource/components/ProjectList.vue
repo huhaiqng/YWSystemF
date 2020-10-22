@@ -31,7 +31,7 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="软件" align="center">
+      <el-table-column label="组件" align="center">
         <template slot-scope="{row}">
           <span v-for="(item, index) in row.software" :key="item.id">{{ index===0?item.name:", " + item.name }}</span>
         </template>
@@ -64,7 +64,7 @@
         <el-form-item label="项目名" prop="name">
           <el-input v-model="temp.name" style="width:60%" />
         </el-form-item>
-        <el-form-item label="软件" prop="software">
+        <el-form-item label="组件" prop="software">
           <el-select v-model="temp.software" class="filter-item" multiple style="width:60%">
             <el-option v-for="item in softwareList" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
