@@ -683,10 +683,11 @@ export function deleteProjectSQLServer(id) {
 }
 
 // ProjectCodeaddr API
-export function getProjectCodeaddr() {
+export function getProjectCodeaddr(data) {
   return request({
-    url: '/api/projectCodeaddr/',
-    method: 'get'
+    url: '/api/getProjectCodeaddr/',
+    method: 'get',
+    params: data
   })
 }
 

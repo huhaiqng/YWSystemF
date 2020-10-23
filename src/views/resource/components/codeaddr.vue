@@ -86,6 +86,9 @@ export default {
       },
       dialogStatus: 'create',
       dialogVisible: false,
+      queryList: {
+        project: this.project.id
+      },
       textMap: {
         create: '新增',
         edit: '编辑'
@@ -97,7 +100,7 @@ export default {
   },
   methods: {
     getList() {
-      getProjectCodeaddr().then(response => {
+      getProjectCodeaddr(this.queryList).then(response => {
         this.list = response
       })
     },
