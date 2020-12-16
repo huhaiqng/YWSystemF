@@ -26,6 +26,19 @@
         </div>
       </div>
     </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="toUrl('/account/software')">
+        <div class="card-panel-icon-wrapper icon-shopping">
+          <svg-icon icon-class="chart" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            账号
+          </div>
+          <count-to :start-val="0" :end-val="account_count" :duration="3000" class="card-panel-num" />
+        </div>
+      </div>
+    </el-col>
     <!-- <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="toUrl('/resource/javaPackage')">
         <div class="card-panel-icon-wrapper icon-shopping">
@@ -75,6 +88,7 @@ export default {
     getDashboardData().then(response => {
       this.project_count = response.project_count
       this.host_count = response.host_count
+      this.account_count = response.account_count
       this.java_package_count = response.java_package_count
       this.mysqldb_count = response.mysqldb_count
     })
