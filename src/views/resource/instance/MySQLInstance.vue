@@ -50,7 +50,7 @@
           <span>{{ row.origin }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="集群" align="center">
+      <el-table-column label="备注" align="center">
         <template slot-scope="{row}">
           <span>{{ row.cluster }}</span>
         </template>

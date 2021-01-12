@@ -69,7 +69,7 @@
 
           <div class="drawer-item">
             <el-row>
-              <el-col :span="12">集群：</el-col>
+              <el-col :span="12">备注：</el-col>
               <el-col :span="12">{{ instance.cluster }}</el-col>
             </el-row>
           </div>
