@@ -1,4 +1,7 @@
-import { asyncRoutes, constantRoutes } from '@/router'
+import { constantRoutes } from '@/router'
+import { getMenus } from '@/api/dashboard'
+import Layout from '@/layout'
+// import Vue from 'vue'
 
 /**
  * Use meta.role to determine if the current user has permission
@@ -18,21 +21,6 @@ import { asyncRoutes, constantRoutes } from '@/router'
  * @param routes asyncRoutes
  * @param roles
  */
-// export function filterAsyncRoutes(routes, roles) {
-//   const res = []
-
-//   routes.forEach(route => {
-//     const tmp = { ...route }
-//     if (hasPermission(roles, tmp)) {
-//       if (tmp.children) {
-//         tmp.children = filterAsyncRoutes(tmp.children, roles)
-//       }
-//       res.push(tmp)
-//     }
-//   })
-
-//   return res
-// }
 
 const state = {
   routes: [],
@@ -46,15 +34,46 @@ const mutations = {
   }
 }
 
-const actions = {
-  generateRoutes({ commit }, is_superuser) {
-    return new Promise(resolve => {
-      let accessedRoutes = []
-      if (is_superuser) {
-        accessedRoutes = asyncRoutes || []
+export function generaMenu(routes, data) {
+  data.forEach(l1menu => {
+    var menu = {
+      path: l1menu.path,
+      component: Layout,
+      redirect: l1menu.redirect,
+      children: [],
+      name: l1menu.name,
+      meta: { title: l1menu.title, icon: l1menu.icon }
+    }
+
+    l1menu.children.forEach(l2menu => {
+      var cmenu = {
+        path: l2menu.path,
+        component: resolve => require([`@/views${l2menu.component}`], resolve),
+        redirect: l2menu.redirect,
+        name: l2menu.name,
+        meta: { title: l2menu.title }
       }
-      commit('SET_ROUTES', accessedRoutes)
-      resolve(accessedRoutes)
+      menu.children.push(cmenu)
+    })
+    routes.push(menu)
+  })
+}
+
+const actions = {
+  generateRoutes({ commit }) {
+    return new Promise(resolve => {
+      const loadMenuData = []
+      getMenus().then(response => {
+        var data = response
+        Object.assign(loadMenuData, data)
+        var tempAsyncRoutes = []
+        generaMenu(tempAsyncRoutes, loadMenuData)
+        var accessedRoutes = tempAsyncRoutes
+        commit('SET_ROUTES', accessedRoutes)
+        resolve(accessedRoutes)
+      }).catch(error => {
+        console.log(error)
+      })
     })
   }
 }

@@ -64,7 +64,6 @@
 
 <script>
 import SocialSign from './components/SocialSignin'
-import { getEnv, getSoftware } from '@/api/resource'
 import bgimg from '@/images/bg.jpg'
 
 export default {
@@ -135,7 +134,6 @@ export default {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
-              this.initData()
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
             })
@@ -146,14 +144,6 @@ export default {
           console.log('error submit!!')
           return false
         }
-      })
-    },
-    initData() {
-      getEnv().then(response => {
-        this.$store.dispatch('app/setEnv', response)
-      })
-      getSoftware().then(response => {
-        this.$store.dispatch('app/setSoftware', response)
       })
     },
     getOtherQuery(query) {

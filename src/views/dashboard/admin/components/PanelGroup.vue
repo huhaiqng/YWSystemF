@@ -81,7 +81,8 @@ export default {
       project_count: 100,
       host_count: 10000,
       mysqldb_count: 50,
-      java_package_count: 500
+      java_package_count: 500,
+      account_count: 500
     }
   },
   mounted() {

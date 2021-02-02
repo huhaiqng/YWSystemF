@@ -30,10 +30,10 @@ router.beforeEach(async(to, from, next) => {
       if (userInfo === null) {
         try {
           // 获取用户是否是超级管理员
-          const { is_superuser } = await store.dispatch('user/getInfo')
-
+          // const { is_superuser } = await store.dispatch('user/getInfo')
+          await store.dispatch('user/getInfo')
           // 添加超级管理员路由
-          const accessRoutes = await store.dispatch('permission/generateRoutes', is_superuser)
+          const accessRoutes = await store.dispatch('permission/generateRoutes')
           router.addRoutes(accessRoutes)
           next({ ...to, replace: true })
         } catch (error) {

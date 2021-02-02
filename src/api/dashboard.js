@@ -6,3 +6,10 @@ export function getDashboardData() {
     method: 'get'
   })
 }
+
+export function getMenus() {
+  return request({
+    url: '/api/menu/',
+    method: 'get'
+  })
+}

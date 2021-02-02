@@ -51,119 +51,117 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/project',
-    component: Layout,
-    redirect: '/index',
-    name: 'Project',
-    meta: { title: '项目管理', icon: 'component' },
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/resource/project'),
-        name: 'Project',
-        meta: {
-          title: '项目管理'
-        }
-      }
-    ]
-  },
-  {
-    path: '/resource',
-    component: Layout,
-    redirect: '/host',
-    name: 'Resource',
-    meta: {
-      'title': '资源管理',
-      'icon': 'tree'
-    },
-    children: [
-      {
-        path: 'host',
-        component: () => import('@/views/resource/host'),
-        name: 'Host',
-        meta: { 'title': '主机' }
-      },
-      {
-        path: 'mysqlInstance',
-        component: () => import('@/views/resource/instance/MySQLInstance'),
-        name: 'MySQLInstance',
-        meta: { 'title': 'MySQL 实例' }
-      },
-      {
-        path: 'redisInstance',
-        component: () => import('@/views/resource/instance/RedisInstance'),
-        name: 'RedisInstance',
-        meta: { 'title': 'Redis 实例' }
-      },
-      {
-        path: 'zookeeperInstance',
-        component: () => import('@/views/resource/instance/ZookeeperInstance'),
-        name: 'zookeeperInstance',
-        meta: { 'title': 'Zookeeper 实例' }
-      },
-      {
-        path: 'activemqInstance',
-        component: () => import('@/views/resource/instance/ActivemqInstance'),
-        name: 'activemqInstance',
-        meta: { 'title': 'Activemq 实例' }
-      },
-      {
-        path: 'rabbitmqInstance',
-        component: () => import('@/views/resource/instance/RabbitmqInstance'),
-        name: 'RabbitmqInstance',
-        meta: { 'title': 'Rabbitmq 实例' }
-      }
-    ]
-  },
-  {
-    path: '/task-cener',
-    component: Layout,
-    redirect: '/task-center/task',
-    name: 'TaskCenter',
-    meta: {
-      title: '任务中心',
-      icon: 'list'
-    },
-    children: [
-      {
-        path: 'task',
-        component: () => import('@/views/task-center/task'),
-        name: 'Task',
-        meta: {
-          title: '任务'
-        }
-      },
-      {
-        path: 'ExecTask',
-        component: () => import('@/views/task-center/ExecTask'),
-        name: 'ExecTask',
-        meta: {
-          title: '执行任务'
-        }
-      }
-    ]
-  },
-  {
-    path: '/account',
-    component: Layout,
-    redirect: '/account/software',
-    name: 'Account',
-    meta: {
-      title: '账号管理',
-      icon: 'peoples'
-    },
-    children: [
-      {
-        path: 'software',
-        component: () => import('@/views/account/index'),
-        name: 'Software',
-        meta: {
-          title: '账号管理'
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/project',
+  //   component: Layout,
+  //   redirect: '/index',
+  //   name: 'Project',
+  //   meta: { title: '项目管理', icon: 'component' },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/resource/project'),
+  //       name: 'Project',
+  //       meta: { title: '项目管理' }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/resource',
+  //   component: Layout,
+  //   redirect: '/host',
+  //   name: 'Resource',
+  //   meta: {
+  //     'title': '资源管理',
+  //     'icon': 'tree'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'host',
+  //       component: () => import('@/views/resource/host'),
+  //       name: 'Host',
+  //       meta: { 'title': '主机' }
+  //     },
+  //     {
+  //       path: 'mysqlInstance',
+  //       component: () => import('@/views/resource/instance/MySQLInstance'),
+  //       name: 'MySQLInstance',
+  //       meta: { 'title': 'MySQL 实例' }
+  //     },
+  //     {
+  //       path: 'redisInstance',
+  //       component: () => import('@/views/resource/instance/RedisInstance'),
+  //       name: 'RedisInstance',
+  //       meta: { 'title': 'Redis 实例' }
+  //     },
+  //     {
+  //       path: 'zookeeperInstance',
+  //       component: () => import('@/views/resource/instance/ZookeeperInstance'),
+  //       name: 'zookeeperInstance',
+  //       meta: { 'title': 'Zookeeper 实例' }
+  //     },
+  //     {
+  //       path: 'activemqInstance',
+  //       component: () => import('@/views/resource/instance/ActivemqInstance'),
+  //       name: 'activemqInstance',
+  //       meta: { 'title': 'Activemq 实例' }
+  //     },
+  //     {
+  //       path: 'rabbitmqInstance',
+  //       component: () => import('@/views/resource/instance/RabbitmqInstance'),
+  //       name: 'RabbitmqInstance',
+  //       meta: { 'title': 'Rabbitmq 实例' }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/task-cener',
+  //   component: Layout,
+  //   redirect: '/task-center/task',
+  //   name: 'TaskCenter',
+  //   meta: {
+  //     title: '任务中心',
+  //     icon: 'list'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'task',
+  //       component: () => import('@/views/task-center/task'),
+  //       name: 'Task',
+  //       meta: {
+  //         title: '任务'
+  //       }
+  //     },
+  //     {
+  //       path: 'ExecTask',
+  //       component: () => import('@/views/task-center/ExecTask'),
+  //       name: 'ExecTask',
+  //       meta: {
+  //         title: '执行任务'
+  //       }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/account',
+  //   component: Layout,
+  //   redirect: '/account/software',
+  //   name: 'Account',
+  //   meta: {
+  //     title: '账号管理',
+  //     icon: 'peoples'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'software',
+  //       component: () => import('@/views/account/index'),
+  //       name: 'Software',
+  //       meta: {
+  //         title: '账号管理'
+  //       }
+  //     }
+  //   ]
+  // },
   {
     path: '/redirect',
     component: Layout,
@@ -196,38 +194,38 @@ export const constantRoutes = [
  * asyncRoutes
  * the routes that need to be dynamically loaded based on user roles
  */
-export const asyncRoutes = [
-  {
-    path: '/auth_permission',
-    component: Layout,
-    redirect: '/auth_permission/user',
-    name: 'AuthPermission',
-    meta: {
-      title: '认证权限',
-      icon: 'password'
-    },
-    children: [
-      {
-        path: 'user',
-        component: () => import('@/views/auth-permission/user'),
-        name: 'User',
-        meta: {
-          title: '系统用户'
-        }
-      },
-      {
-        path: 'group',
-        component: () => import('@/views/auth-permission/group'),
-        name: 'Group',
-        meta: {
-          title: '用户组'
-        }
-      }
-    ]
-  }
-  // 404 page must be placed at the end !!!
-  // { path: '*', redirect: '/404', hidden: true }
-]
+// export const asyncRoutes = [
+//   {
+//     path: '/auth_permission',
+//     component: Layout,
+//     redirect: '/auth_permission/user',
+//     name: 'AuthPermission',
+//     meta: {
+//       title: '认证权限',
+//       icon: 'password'
+//     },
+//     children: [
+//       {
+//         path: 'user',
+//         component: () => import('@/views/auth-permission/user'),
+//         name: 'User',
+//         meta: {
+//           title: '系统用户'
+//         }
+//       },
+//       {
+//         path: 'group',
+//         component: () => import('@/views/auth-permission/group'),
+//         name: 'Group',
+//         meta: {
+//           title: '用户组'
+//         }
+//       }
+//     ]
+//   }
+//   // 404 page must be placed at the end !!!
+//   // { path: '*', redirect: '/404', hidden: true }
+// ]
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
