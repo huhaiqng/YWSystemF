@@ -36,17 +36,23 @@
         </el-form-item>
       </el-form>
       <el-tabs v-model="activeName" tab-position="top" type="border-card" style="margin-left:30px;margin-right:30px;">
+        <!-- 全局权限 -->
         <el-tab-pane label="设置全局权限" name="first">
-          <div v-for="item in contentType" :key="item.model">
-            <span>{{ modelMap[item.model] }}</span>
-            <el-checkbox-group v-model="temp.permissions" style="margin-top:10px;margin-bottom:20px;">
-              <el-checkbox v-for="perm in item.permission" :key="perm.id" :label="perm.id">{{ permName(perm.codename) }}</el-checkbox>
-            </el-checkbox-group>
+          <div class="tab-pane">
+            <el-scrollbar>
+              <div v-for="item in contentType" :key="item.model">
+                <span>{{ item.title }}</span>
+                <el-checkbox-group v-model="temp.permissions" style="margin-top:10px;margin-bottom:20px;">
+                  <el-checkbox v-for="perm in item.permission" :key="perm.id" :label="perm.id">{{ permName(perm.codename) }}</el-checkbox>
+                </el-checkbox-group>
+              </div>
+            </el-scrollbar>
           </div>
         </el-tab-pane>
+        <!-- 对象权限 -->
         <el-tab-pane v-if="dialogStatus === 'edit'" label="设置对象权限" name="second">
           <el-select v-model="permTemp.model" placeholder="请选择模型" @change="getObjects">
-            <el-option v-for="item in contentType" :key="item.id" :label="modelMap[item.model]" :value="item.model" />
+            <el-option v-for="item in contentType" :key="item.id" :label="item.title" :value="item.model" />
           </el-select>
           <el-select v-model="selectedObjects" value-key="id" clearable placeholder="请选择对象" multiple style="margin-left:20px;width:60%;" @change="getObjectPerms()">
             <el-option v-for="item in objects" :key="item.id" :label="getOptionLabel(item)" :value="item" />
@@ -58,21 +64,34 @@
             </el-checkbox-group>
           </div>
         </el-tab-pane>
+        <!-- 菜单权限 -->
+        <el-tab-pane v-if="dialogStatus === 'edit'" label="设置菜单权限" name="four">
+          <div class="tab-pane">
+            <el-scrollbar>
+              <el-tree ref="tree" :data="menus" show-checkbox node-key="id" default-expand-all :props="defaultProps" :default-checked-keys="groupL2menu" @check-change="checkChange" />
+            </el-scrollbar>
+          </div>
+        </el-tab-pane>
+        <!-- 查看对象权限 -->
         <el-tab-pane v-if="dialogStatus === 'edit'" label="查看对象权限" name="third">
-          <div v-for="item in checkedModels" :key="item.id">
-            <el-row>
-              <el-col :span="2">
-                <span>{{ modelMap[item.model] }}</span>
-              </el-col>
-              <el-col :span="22">
-                <div v-for="obj in item.group_objects" :key="obj.object">
-                  <span>{{ obj.object }}</span>
-                  <el-checkbox-group v-model="obj.perms" style="margin-top:10px;margin-bottom:20px;" disabled>
-                    <el-checkbox v-for="perm in getObjectPermOptions(item.model)" :key="perm.id" :label="perm.id">{{ permName(perm.codename) }}</el-checkbox>
-                  </el-checkbox-group>
-                </div>
-              </el-col>
-            </el-row>
+          <div class="tab-pane">
+            <el-scrollbar>
+              <div v-for="item in checkedModels" :key="item.id">
+                <el-row>
+                  <el-col :span="4">
+                    <span>{{ item.title }}</span>
+                  </el-col>
+                  <el-col :span="20">
+                    <div v-for="obj in item.group_objects" :key="obj.object">
+                      <span>{{ obj.object }}</span>
+                      <el-checkbox-group v-model="obj.perms" style="margin-top:10px;margin-bottom:20px;" disabled>
+                        <el-checkbox v-for="perm in getObjectPermOptions(item.model)" :key="perm.id" :label="perm.id">{{ permName(perm.codename) }}</el-checkbox>
+                      </el-checkbox-group>
+                    </div>
+                  </el-col>
+                </el-row>
+              </div>
+            </el-scrollbar>
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -89,9 +108,12 @@
 </template>
 <script>
 import Pagination from '@/components/Pagination'
-import { getContentType, getGroup, addGroup, updateGroup, deleteGroup, getGroupObjectPerms, setGroupObjectPerms, getGroupPerms } from '@/api/user'
-import { getHosts, getJavaPackageList, getMySQLDB, getProjects } from '@/api/resource'
+import { getContentType, getGroup, addGroup, updateGroup, deleteGroup, getGroupObjectPerms, setGroupObjectPerms, getGroupPerms, getL2Menu, getGroupL2menu } from '@/api/user'
+import { getHosts } from '@/api/resource'
+import { getMySQLInstance, getRedisInstance, getRabbitmqInstance, getZookeeperInstance, getActivemqInstance } from '@/api/instance'
 import { getTask } from '@/api/task'
+import { getAccounts } from '@/api/account'
+import { getL1Menu } from '@/api/dashboard'
 
 export default {
   name: 'Group',
@@ -109,6 +131,13 @@ export default {
         page: 1,
         limit: 10
       },
+      menus: [],
+      groupL2menu: [],
+      defaultProps: {
+        children: 'children',
+        label: 'title'
+      },
+      modelMenu: [],
       dialogVisible: false,
       dialogStatus: null,
       textMap: {
@@ -117,13 +146,7 @@ export default {
       },
       activeName: 'first',
       contentType: [],
-      modelMap: {
-        host: '主机',
-        javapackage: 'JAR 包',
-        project: '项目',
-        task: '任务',
-        mysqldb: 'MySQL DB'
-      },
+      allContentType: [],
       labelMap: {
         host: 'ip'
       },
@@ -149,6 +172,7 @@ export default {
       this.dialogStatus = 'create'
     },
     handleUpdate(row) {
+      this.checkedModels = []
       this.permTemp.model = null
       this.selectedObjects = []
       this.selectedObjectsWithPerms = []
@@ -156,22 +180,46 @@ export default {
       this.temp = Object.assign({}, row)
       this.dialogVisible = true
       this.dialogStatus = 'edit'
-      getGroupPerms({ groupname: this.temp.name }).then(response => {
-        this.checkedModels = response
+      this.contentType = []
+      var data = { groupname: this.temp.name }
+      getGroupL2menu(data).then(response => {
+        this.groupL2menu = response
+      })
+      getContentType().then(response => {
+        this.allContentType = response
+        getL2Menu().then(response => {
+          this.modelMenu = response
+          for (var i = 0; i < this.allContentType.length; i++) {
+            for (var j = 0; j < this.modelMenu.length; j++) {
+              if (this.allContentType[i].id === this.modelMenu[j].name) {
+                this.allContentType[i].title = this.modelMenu[j].title
+                this.contentType.push(this.allContentType[i])
+              }
+            }
+          }
+          getGroupPerms({ groupname: this.temp.name }).then(response => {
+            this.checkedModels = response
+            for (var x = 0; x < this.checkedModels.length; x++) {
+              for (var y = 0; y < this.contentType.length; y++) {
+                if (this.checkedModels[x].model === this.contentType[y].model) {
+                  this.checkedModels[x].title = this.contentType[y].title
+                }
+              }
+            }
+          })
+        })
+      })
+      getL1Menu().then(response => {
+        this.menus = response
+        for (var i = 0; i < this.menus.length; i++) {
+          this.menus[i].id = 'l1' + this.menus[i].id
+        }
       })
     },
     getList() {
       getGroup(this.listQuery).then(response => {
         this.list = response.results
         this.total = response.count
-      })
-      getContentType().then(response => {
-        this.contentType = []
-        for (var i = 0; i < response.length; i++) {
-          if (this.modelMap[response[i].model]) {
-            this.contentType.push(response[i])
-          }
-        }
       })
     },
     createData() {
@@ -189,7 +237,6 @@ export default {
     },
     updateData() {
       updateGroup(this.temp).then(() => {
-        this.getList()
         this.dialogVisible = false
         this.setObjectPerms()
         this.$notify({
@@ -198,6 +245,7 @@ export default {
           type: 'success',
           duration: 2000
         })
+        this.getList()
       })
     },
     deleteData(id, index) {
@@ -250,15 +298,10 @@ export default {
       var params = null
       this.selectedObjects = []
       this.selectedObjectsWithPerms = []
+      this.objects = []
       if (this.permTemp.model === 'host') {
         params = { ip: '', type: '', env: '', limit: 10000 }
         getHosts(params).then(response => {
-          this.objects = response
-        })
-      }
-      if (this.permTemp.model === 'javapackage') {
-        params = { name: '', project: '', page: 0, limit: 10000 }
-        getJavaPackageList(params).then(response => {
           this.objects = response
         })
       }
@@ -268,14 +311,39 @@ export default {
           this.objects = response
         })
       }
-      if (this.permTemp.model === 'project') {
-        getProjects().then(response => {
+      if (this.permTemp.model === 'account') {
+        params = { use: '', page: 0, limit: 10000 }
+        getAccounts(params).then(response => {
           this.objects = response
         })
       }
-      if (this.permTemp.model === 'mysqldb') {
-        params = { name: '', project: '', page: 0, limit: 10000 }
-        getMySQLDB(params).then(response => {
+      if (this.permTemp.model === 'mysqlinstance') {
+        params = { inside_addr: '', page: 0, limit: 10000 }
+        getMySQLInstance(params).then(response => {
+          this.objects = response
+        })
+      }
+      if (this.permTemp.model === 'activemqinstance') {
+        params = { inside_addr: '', page: 0, limit: 10000 }
+        getActivemqInstance(params).then(response => {
+          this.objects = response
+        })
+      }
+      if (this.permTemp.model === 'rabbitmqinstance') {
+        params = { inside_addr: '', page: 0, limit: 10000 }
+        getRabbitmqInstance(params).then(response => {
+          this.objects = response
+        })
+      }
+      if (this.permTemp.model === 'redisinstance') {
+        params = { inside_addr: '', page: 0, limit: 10000 }
+        getRedisInstance(params).then(response => {
+          this.objects = response
+        })
+      }
+      if (this.permTemp.model === 'zookeeperinstance') {
+        params = { inside_addr: '', page: 0, limit: 10000 }
+        getZookeeperInstance(params).then(response => {
           this.objects = response
         })
       }
@@ -284,6 +352,18 @@ export default {
     getOptionLabel(item) {
       if (this.permTemp.model === 'host') {
         return item.ip
+      } else if (this.permTemp.model === 'mysqlinstance') {
+        return item.inside_addr
+      } else if (this.permTemp.model === 'activemqinstance') {
+        return item.inside_addr
+      } else if (this.permTemp.model === 'rabbitmqinstance') {
+        return item.inside_addr
+      } else if (this.permTemp.model === 'redisinstance') {
+        return item.inside_addr
+      } else if (this.permTemp.model === 'zookeeperinstance') {
+        return item.inside_addr
+      } else if (this.permTemp.model === 'account') {
+        return item.use
       } else {
         return item.name
       }
@@ -297,6 +377,7 @@ export default {
       }
     },
     setObjectPerms() {
+      // 更新对象权限
       if (this.permTemp.model) {
         var data = { groupname: this.temp.name, model: this.permTemp.model, objects: this.selectedObjectsWithPerms }
         setGroupObjectPerms(data)
@@ -304,7 +385,32 @@ export default {
     },
     getObjectPermOptions(model) {
       return this.contentType.filter(ct => { return ct.model === model })[0].permission.filter(c => { return c.codename !== 'add_' + model })
+    },
+    checkChange(menu, isCheck) {
+      if (!menu.children) {
+        if (isCheck) {
+          menu.perms = [176]
+        } else {
+          menu.perms = []
+        }
+        // 更新菜单权限
+        var checkedL2Menus = []
+        checkedL2Menus.push(menu)
+        var menuData = { groupname: this.temp.name, model: 'l2menu', objects: checkedL2Menus }
+        setGroupObjectPerms(menuData)
+      }
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+.tab-pane{
+  flex: 1;
+  /deep/.el-scrollbar{
+    height: calc(100vh - 600px);
+    .el-scrollbar__wrap{
+      overflow-x: hidden;
+    }
+  }
+}
+</style>

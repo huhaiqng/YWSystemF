@@ -12,6 +12,7 @@ const getters = {
   userInfo: state => state.user.userInfo,
   permission_routes: state => state.permission.routes,
   errorLogs: state => state.errorLog.logs,
-  controlJarResult: state => state.websocket.controlJarResult
+  controlJarResult: state => state.websocket.controlJarResult,
+  addRoutes: state => state.permission.addRoutes
 }
 export default getters

@@ -1,5 +1,6 @@
 import { constantRoutes } from '@/router'
-import { getMenus } from '@/api/dashboard'
+import { getL1Menu } from '@/api/dashboard'
+import { getL2Menu } from '@/api/user'
 import Layout from '@/layout'
 // import Vue from 'vue'
 
@@ -62,15 +63,30 @@ export function generaMenu(routes, data) {
 const actions = {
   generateRoutes({ commit }) {
     return new Promise(resolve => {
-      const loadMenuData = []
-      getMenus().then(response => {
-        var data = response
-        Object.assign(loadMenuData, data)
-        var tempAsyncRoutes = []
-        generaMenu(tempAsyncRoutes, loadMenuData)
-        var accessedRoutes = tempAsyncRoutes
-        commit('SET_ROUTES', accessedRoutes)
-        resolve(accessedRoutes)
+      var menus = []
+      var l1menus = []
+      var l2menus = []
+      getL1Menu().then(response => {
+        l1menus = response
+        getL2Menu().then(response => {
+          l2menus = response
+          for (var i = 0; i < l1menus.length; i++) {
+            l1menus[i].children = []
+            for (var j = 0; j < l2menus.length; j++) {
+              if (l1menus[i].id === l2menus[j].parent) {
+                l1menus[i].children.push(l2menus[j])
+              }
+            }
+            if (l1menus[i].children.length !== 0) {
+              menus.push(l1menus[i])
+            }
+          }
+          var tempAsyncRoutes = []
+          generaMenu(tempAsyncRoutes, menus)
+          var accessedRoutes = tempAsyncRoutes
+          commit('SET_ROUTES', accessedRoutes)
+          resolve(accessedRoutes)
+        })
       }).catch(error => {
         console.log(error)
       })

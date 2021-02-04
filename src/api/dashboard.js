@@ -9,7 +9,14 @@ export function getDashboardData() {
 
 export function getMenus() {
   return request({
-    url: '/api/menu/',
+    url: '/api/getL1Menu/',
+    method: 'get'
+  })
+}
+
+export function getL1Menu() {
+  return request({
+    url: '/api/getL1Menu/',
     method: 'get'
   })
 }

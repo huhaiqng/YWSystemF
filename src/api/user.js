@@ -132,3 +132,18 @@ export function getGroupPerms(data) {
     params: data
   })
 }
+
+export function getGroupL2menu(data) {
+  return request({
+    url: '/api/getGroupL2menu/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function getL2Menu() {
+  return request({
+    url: '/api/getL2Menu/',
+    method: 'get'
+  })
+}
