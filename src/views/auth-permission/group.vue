@@ -36,12 +36,15 @@
         </el-form-item>
       </el-form>
       <el-tabs v-model="activeName" tab-position="top" type="border-card" style="margin-left:30px;margin-right:30px;">
-        <!-- 全局权限 -->
+        <!-- 全局权限
+        获取所有的模型，模型包含了可设置的权限。获取二级菜单，二级菜单绑定了需要设置全局权限的模型。
+        通过二级菜单过滤出需要设置全局权限的模型，将二级菜单的标题添加到模型中，便于展示。 -->
         <el-tab-pane label="设置全局权限" name="first">
           <div class="tab-pane">
             <el-scrollbar>
               <div v-for="item in contentType" :key="item.model">
                 <span>{{ item.title }}</span>
+                <!-- 获取组中包含了该组拥有的模型权限 -->
                 <el-checkbox-group v-model="temp.permissions" style="margin-top:10px;margin-bottom:20px;">
                   <el-checkbox v-for="perm in item.permission" :key="perm.id" :label="perm.id">{{ permName(perm.codename) }}</el-checkbox>
                 </el-checkbox-group>
@@ -85,6 +88,7 @@
                     <div v-for="obj in item.group_objects" :key="obj.object">
                       <span>{{ obj.object }}</span>
                       <el-checkbox-group v-model="obj.perms" style="margin-top:10px;margin-bottom:20px;" disabled>
+                        <!-- 列出该模型可配置的权限 -->
                         <el-checkbox v-for="perm in getObjectPermOptions(item.model)" :key="perm.id" :label="perm.id">{{ permName(perm.codename) }}</el-checkbox>
                       </el-checkbox-group>
                     </div>
@@ -145,6 +149,7 @@ export default {
         edit: '编辑'
       },
       activeName: 'first',
+      // 需要设置权限的模型
       contentType: [],
       allContentType: [],
       labelMap: {
@@ -182,25 +187,32 @@ export default {
       this.dialogStatus = 'edit'
       this.contentType = []
       var data = { groupname: this.temp.name }
+      // 获取组的已有权限的二级菜单
       getGroupL2menu(data).then(response => {
         this.groupL2menu = response
       })
+      // 获取所有模型，模型会带出该模型可设置的权限
       getContentType().then(response => {
         this.allContentType = response
+        // 获取二级菜单，二级菜单定义了哪些模型需要设置全局权限
         getL2Menu().then(response => {
           this.modelMenu = response
           for (var i = 0; i < this.allContentType.length; i++) {
             for (var j = 0; j < this.modelMenu.length; j++) {
+              // 如果模型和菜单绑定的模型相等，则该模型添加到需要设置全局权限列表中 contentType
               if (this.allContentType[i].id === this.modelMenu[j].name) {
+                // 将模型的标题设置为菜单的标题
                 this.allContentType[i].title = this.modelMenu[j].title
                 this.contentType.push(this.allContentType[i])
               }
             }
           }
+          // 获取组被授权的模型及对象
           getGroupPerms({ groupname: this.temp.name }).then(response => {
             this.checkedModels = response
             for (var x = 0; x < this.checkedModels.length; x++) {
               for (var y = 0; y < this.contentType.length; y++) {
+                // 设置被授权模型的名称
                 if (this.checkedModels[x].model === this.contentType[y].model) {
                   this.checkedModels[x].title = this.contentType[y].title
                 }
@@ -215,6 +227,7 @@ export default {
           this.menus[i].id = 'l1' + this.menus[i].id
         }
       })
+      console.log(this.menus)
     },
     getList() {
       getGroup(this.listQuery).then(response => {

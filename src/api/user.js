@@ -62,7 +62,7 @@ export function updateGroup(data) {
   })
 }
 
-// Group API
+// User API
 export function getUser(data) {
   return request({
     url: '/api/getUsers/',
