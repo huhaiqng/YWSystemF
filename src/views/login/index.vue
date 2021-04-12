@@ -228,9 +228,11 @@ $light_gray:#eee;
     position: relative;
     width: 520px;
     max-width: 100%;
-    padding: 160px 35px 0;
+    padding: 35px 35px 0;
     margin: 0 auto;
+    margin-top: 200px;
     overflow: hidden;
+    background: #00688B;
   }
 
   .tips {

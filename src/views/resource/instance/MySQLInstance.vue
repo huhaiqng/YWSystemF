@@ -113,7 +113,7 @@
             <el-option value="华为云">华为云</el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="集群" prop="cluster">
+        <el-form-item label="备注" prop="cluster">
           <el-input v-model="temp.cluster" style="width:60%" />
         </el-form-item>
       </el-form>
