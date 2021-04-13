@@ -232,7 +232,8 @@ import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
-import { encodeStr, decodeStr } from '@/utils/base64'
+// import { encodeStr, decodeStr } from '@/utils/base64'
+import { encrypt, decrypt } from '@/utils/aes'
 import HostDrawerContent from '@/components/Drawer/HostDrawerContent'
 import { sshConnectHost } from '@/utils/webssh'
 
@@ -353,7 +354,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.password = encodeStr(this.temp.password)
+          this.temp.password = encrypt(this.temp.password)
           addHost(this.temp).then(() => {
             // this.list.unshift(this.temp)
             this.getList()
@@ -370,7 +371,7 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.password = decodeStr(this.temp.password)
+      this.temp.password = decrypt(this.temp.password)
       this.dialogStatus = 'update'
       this.passwordType = 'password'
       this.dialogFormVisible = true
@@ -381,7 +382,7 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.password = encodeStr(this.temp.password)
+          this.temp.password = encrypt(this.temp.password)
           updateHost(this.temp).then(() => {
             // const index = this.list.findIndex(v => v.id === this.temp.id)
             // this.list.splice(index, 1, this.temp)
@@ -469,7 +470,7 @@ export default {
     },
     showDetail(row) {
       this.temp = Object.assign({}, row)
-      this.temp.password = decodeStr(this.temp.password)
+      this.temp.password = decrypt(this.temp.password)
       this.drawerVisible = true
     },
     beforeUpload(file) {
@@ -491,7 +492,7 @@ export default {
       this.failTableData = []
       const tableData = results
       for (var i = 0; i < tableData.length; i++) {
-        tableData[i].password = encodeStr(tableData[i].password)
+        tableData[i].password = encrypt(tableData[i].password)
         addHost(tableData[i]).then(() => {
           this.uploadSuccessCount += 1
         }).catch(() => {

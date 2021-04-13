@@ -136,6 +136,7 @@
 import { addMySQLInstance, deleteMySQLInstance, updateMySQLInstance, getMySQLInstance } from '@/api/instance'
 import Pagination from '@/components/Pagination'
 import MysqlInstanceDrawer from '@/components/Drawer/MySQLInstance'
+import { encrypt, decrypt } from '@/utils/aes'
 export default {
   name: 'MySQLInstance',
   components: { Pagination, MysqlInstanceDrawer },
@@ -203,6 +204,7 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row)
+      this.temp.password = decrypt(this.temp.password)
       this.dialogStatus = 'edit'
       this.dialogVisible = true
     },
@@ -229,6 +231,7 @@ export default {
       })
     },
     createData() {
+      this.temp.password = encrypt(this.temp.password)
       addMySQLInstance(this.temp).then(response => {
         this.getList()
         this.dialogVisible = false
@@ -241,6 +244,7 @@ export default {
       })
     },
     updateData() {
+      this.temp.password = encrypt(this.temp.password)
       updateMySQLInstance(this.temp).then(() => {
         this.getList()
         this.dialogVisible = false
@@ -254,6 +258,7 @@ export default {
     },
     showDetail(row) {
       this.instance = Object.assign({}, row)
+      this.instance.password = decrypt(this.instance.password)
       this.drawerVisible = true
     }
   }

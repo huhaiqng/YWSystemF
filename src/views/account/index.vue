@@ -126,7 +126,8 @@
 <script>
 import Pagination from '@/components/Pagination'
 import { getAccounts, addAccount, updateAccount, deleteAccount } from '@/api/account'
-import { encodeStr, decodeStr } from '@/utils/base64'
+// import { encodeStr, decodeStr } from '@/utils/base64'
+import { encrypt, decrypt } from '@/utils/aes'
 export default {
   name: 'Software',
   components: { Pagination },
@@ -170,7 +171,7 @@ export default {
     handleUpdate(row) {
       this.temp = Object.assign({}, row)
       this.passwordType = 'password'
-      this.temp.password = decodeStr(this.temp.password)
+      this.temp.password = decrypt(this.temp.password)
       this.dialogVisible = true
       this.dialogStatus = 'edit'
     },
@@ -183,7 +184,7 @@ export default {
       })
     },
     createData() {
-      this.temp.password = encodeStr(this.temp.password)
+      this.temp.password = encrypt(this.temp.password)
       addAccount(this.temp).then(() => {
         // this.list.unshift(this.temp)
         this.getList()
@@ -198,7 +199,7 @@ export default {
     },
     updateData() {
       console.log(this.temp)
-      this.temp.password = encodeStr(this.temp.password)
+      this.temp.password = encrypt(this.temp.password)
       updateAccount(this.temp).then(() => {
         const index = this.list.findIndex(v => v.id === this.temp.id)
         this.list.splice(index, 1, this.temp)
@@ -235,7 +236,7 @@ export default {
     },
     showDetail(row) {
       this.temp = Object.assign({}, row)
-      this.temp.password = decodeStr(this.temp.password)
+      this.temp.password = decrypt(this.temp.password)
       this.drawerVisible = true
     },
     showPwd() {
