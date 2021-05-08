@@ -198,7 +198,6 @@ export default {
       })
     },
     updateData() {
-      console.log(this.temp)
       this.temp.password = encrypt(this.temp.password)
       updateAccount(this.temp).then(() => {
         const index = this.list.findIndex(v => v.id === this.temp.id)
